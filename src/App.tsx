@@ -1,10 +1,10 @@
-import ResponsiveAppBar from "@/components/ReponsiveAppBar"
+import ResponsiveAppBar from "@/components/ReponsiveAppBar";
 function App() {
   return (
     <>
       <ResponsiveAppBar />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
