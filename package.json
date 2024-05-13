@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write **/*.{ts,tsx,js,jsx}",
-    "coverage": "vitest --coverage"
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -23,6 +23,8 @@
     "swr": "^2.2.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^14.2.2",
     "@types/node": "^20.12.11",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
