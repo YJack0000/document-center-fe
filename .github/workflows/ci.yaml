@@ -60,10 +60,9 @@ jobs:
         git add .
         if git diff --staged --quiet; then
           echo "No changes to commit."
-          echo "::set-output name=changes::false"
         else
           git commit -m "style: Format code"
-          echo "::set-output name=changes::true"
+          echo "changes=true" >> $GITHUB_ENV
         fi
     - name: Push changes
       if: steps.commit.outputs.changes == 'true'
