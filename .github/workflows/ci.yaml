@@ -1,82 +1,58 @@
 name: Continuous Integration
 
 on:
-  push: 
+  push:
     branches:
-        - main
+      - main
   pull_request:
+    branches:
+      - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
+  # test:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       node-version: [20.x]
+    
+  #   steps:
+  #   - uses: actions/checkout@v4
 
-    steps:
-    - uses: actions/checkout@v4
+  #   - name: Use Node.js ${{ matrix.node-version }}
+  #     uses: actions/setup-node@v2
+  #     with:
+  #       node-version: ${{ matrix.node-version }}
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+  #   - name: Install dependencies for frontend
+  #     run: |
+  #       npm ci
 
-    - name: Install dependencies for frontend
-      run: npm ci
-
-    - name: Run tests for frontend
-      run: npm run coverage
-
-    - name: Upload coverage to artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: coverage
-
-  format:
+  #   - name: Run tests for frontend
+  
+  build-and-push:
+    # needs: [test, scan]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.PAT }}
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-
-    - name: Install Dependencies
-      working-directory:
-      run: npm ci
-
-    - name: Format 
-      run: npm run format
-
-    - name: Commit changes
-      id: commit
-      run: |
-        git config --local user.email "yjack0000.cs12@nycu.edu.tw"
-        git config --local user.name "YJack0000"
-        git add .
-        if git diff --staged --quiet; then
-          echo "No changes to commit."
-        else
-          git commit -m "style: Format code"
-          echo "changes=true" >> $GITHUB_ENV
-        fi
-    - name: Push changes
-      if: steps.commit.outputs.changes == 'true'
-      run: git push
-
-  publish:
-    runs-on: ubuntu-latest
-    needs: [test, format]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build Docker Images
-      run: |
-        docker build -t ghcr.io/yjack0000/document-center-fe .
-    - name: Push to GitHub Container Registry with tag
-      run: |
-        docker login ghcr.io -u yjack0000 --password ${{ secrets.PACKAGE_PAT }}
-        docker push ghcr.io/yjack0000/document-center-fe
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v1
+      - uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/document-center-fe:v${{ github.run_number }}
+      # - name: Update k8s config
+      #   run: |
+      #     sed -i "s|yjack0000cs12/document-center-fe:v[0-9]*|yjack0000cs12/document-center-fe:v${{ github.run_number }}|" ./k8s/deploys.yml
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      #     git config --global user.name "github-actions[bot]"
+      #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git          
+      #     git add ./k8s/deploys.yml
+      #     git commit -m "Update deployment image to v${{ github.run_number }}"
+      #     git push
