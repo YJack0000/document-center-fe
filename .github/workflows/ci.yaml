@@ -19,9 +19,14 @@ jobs:
     # and run all Cypress tests
     - name: Cypress run
       uses: cypress-io/github-action@v6
+      with:
+        build: npm cypress run
+        browser: chrome
+        
+
   
   build-and-push:
-    # needs: [test, scan]
+    needs: [cypress-e2e-test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
