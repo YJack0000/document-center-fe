@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: document-center-fe
+  namespace: document-center
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: document-center-fe
+  template:
+    metadata:
+      labels:
+        app: document-center-fe
+    spec:
+      containers:
+      - name: document-center-fe
+        image: yjack0000cs12/document-center-fe:v1
+        ports:
+        - containerPort: 3000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
