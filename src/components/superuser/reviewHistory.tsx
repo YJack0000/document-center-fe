@@ -47,7 +47,7 @@ export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {docu
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Review History</Button>
+        <Button variant="outline">審核紀錄</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[650px]">
         <DialogHeader>
