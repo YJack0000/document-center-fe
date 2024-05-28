@@ -27,12 +27,13 @@ jobs:
     - name: Install dependencies for frontend
       run: |
         npm ci
+    - name: Start frontend server in the background
+      run: |
+        npm run start &
 
     - name: Cypress run
       uses: cypress-io/github-action@v6
       with:
-        build: npm run build
-        start: npm run start
         browser: chrome
         wait-on: 'http://localhost:3000'
         
