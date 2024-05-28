@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  cypress e2e test:
+  cypress-e2e-test:
     runs-on: ubuntu-latest
     
     steps:
