@@ -1,20 +1,19 @@
-FROM node:20 as builder
-
-WORKDIR /app
-
+# Build Stage
+FROM node:20-alpine AS BUILD_IMAGE
+WORKDIR /build
 COPY package*.json ./
-
-RUN npm install
-
+RUN npm ci
 COPY . .
-
 RUN npm run build
 
-FROM nginx:stable-alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Production Stage
+FROM node:20-alpine AS PRODUCTION_STAGE
+WORKDIR /app
+COPY --from=BUILD_IMAGE /build/package*.json ./
+COPY --from=BUILD_IMAGE /build/.next ./.next
+COPY --from=BUILD_IMAGE /build/public ./public
+COPY --from=BUILD_IMAGE /build/node_modules ./node_modules
+ENV NODE_ENV=production
+EXPOSE 3000
+CMD ["npm", "start"]
