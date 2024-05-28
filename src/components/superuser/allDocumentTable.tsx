@@ -15,7 +15,8 @@ import {
 } from "@tanstack/react-table"
 import { 
   ArrowUpDown,
-  ChevronDown, 
+  ChevronDown,
+  Rewind, 
   // MoreHorizontal 
 } from "lucide-react"
 
@@ -43,9 +44,13 @@ import {
 import SuperUserAllDocumnetSelectUser from "./selectAssignReviewer"
 import SuperUserAllDocumnetShowReviewDialog from "./reviewHistory"
 // import { createDeflate } from "zlib"
-import { format } from 'date-fns';
+import { format, min, set } from 'date-fns';
 import SuperUserDeleteDocument from "./deleteDocument"
+import SuperUserAssignReviewerBtn from "./assignReviewerBtn"
 import RowSortingBtn from "./rowSortingBtn"
+import { Source_Serif_4 } from "next/font/google"
+
+import { reviewerObjType, rowSelectedDocumentInfoType } from './type'
 
 
 type SuperUserAllDocumnetTableProps = {
@@ -55,110 +60,35 @@ type SuperUserAllDocumnetTableProps = {
   owner: string,
   createdAt: string,
   editAt: string,
-  reviewAt: string
+  reviewAt: string,
+  reviewer: string
 }
 
-export const columns: ColumnDef<SuperUserAllDocumnetTableProps>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "documentId",
-    header: ({column}) => {
-      return (
-        <RowSortingBtn column={column} header="Document ID" />
-      )
-    }
-  },
-  {
-    accessorKey: "title",
 
-    header: "Title",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.status.toLowerCase()
-      return (
-        <div>
-          {status === "pass" 
-          ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-green-500 rounded-full"> {status} </span>)
-          : status === "reject"
-          ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded-full"> {status} </span>)
-          : status === "review"
-          ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full"> {status} </span>)
-          : (<span className="px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-full"> {status} </span>)}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: "owner",
-    header: ({column}) => {
-      return (
-        <RowSortingBtn column={column} header="Owner" />
-      )
-    }
-  },
-  {
-    id: 'create-edit-date',
-    header: ({ column }) => {
-      return (
-        <div>Created Date / Last Edit Date</div>
-      )
-    },
-    cell: ({row}) => {
-      const {createdAt, editAt} = row.original
-      const [createDate, editDate] = [createdAt, editAt].map(date => format(new Date(date), 'MM/dd/yyyy'))
-      return (
-          <div> {createDate} / {editDate}</div>
-      )
-    }
-  },
-  {
-    accessorKey: "reviewAt",
-    header: "Last Review",
-  },
-  {
-    id: "assign-review",
-    header: "Assign Review",
-    cell: ({ row }) => {
-      return (
-        <SuperUserAllDocumnetSelectUser />
-      )
-    },
-  },
-  {
-    id: "show-review-history",
-    cell: ({ row }) => {
-      return (
-        <SuperUserAllDocumnetShowReviewDialog documentId={row.original.documentId} />
-      )
-    }
-  }
-]
+async function fetchData(page: number, pageSize: number) {
+  const response = await fetch(`/api/data?page=${page}&pageSize=${pageSize}`);
+  const data = await response.json();
+  return data;
+}
+
+async function fetchDataTotalCount() {
+  const response = await fetch(`/api/data/total-count`);
+  const data = await response.json();
+  return data;
+}
+
+const switchPagehandler = (page: number, setPageIdx: (p: number) => void) => {
+  console.log("switch page to: ", page)
+  setPageIdx(page)
+}
+
 
 export default function SuperUserAllDocumnetTable() {
+
+  const Pagesize = 5
+  const [pageIdx, setPageIdx] = React.useState(1)
+  const [lastPageIdx, setLastPageIdx] = React.useState(10)
+  
   const [data, setData] = React.useState<SuperUserAllDocumnetTableProps[]>([
     {
       documentId: "001",
@@ -167,7 +97,8 @@ export default function SuperUserAllDocumnetTable() {
       owner: "User1",
       createdAt: "2024-05-24T09:17:51.867Z",
       editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z"
+      reviewAt: "2024-05-24T09:17:51.867Z",
+      reviewer: "User2"
     },
     {
       documentId: "002",
@@ -176,7 +107,8 @@ export default function SuperUserAllDocumnetTable() {
       owner: "yuchang",
       createdAt: "2024-05-24T09:17:51.867Z",
       editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z"
+      reviewAt: "2024-05-24T09:17:51.867Z",
+      reviewer: "User3"
     },
     {
       documentId: "003",
@@ -185,7 +117,8 @@ export default function SuperUserAllDocumnetTable() {
       owner: "yjack",
       createdAt: "2024-05-24T09:17:51.867Z",
       editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z"
+      reviewAt: "2024-05-24T09:17:51.867Z",
+      reviewer: "User4"
     },
     {
       documentId: "004",
@@ -194,7 +127,8 @@ export default function SuperUserAllDocumnetTable() {
       owner: "dora",
       createdAt: "2024-05-24T09:17:51.867Z",
       editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z"
+      reviewAt: "2024-05-24T09:17:51.867Z",
+      reviewer: "User1"
     },
     {
       documentId: "005",
@@ -203,7 +137,8 @@ export default function SuperUserAllDocumnetTable() {
       owner: "yuchang",
       createdAt: "2024-05-24T09:17:51.867Z",
       editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z"
+      reviewAt: "2024-05-24T09:17:51.867Z",
+      reviewer: "User2"
     },
     {
       documentId: "006",
@@ -212,7 +147,8 @@ export default function SuperUserAllDocumnetTable() {
       owner: "yjack",
       createdAt: "2024-05-24T09:17:51.867Z",
       editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z"
+      reviewAt: "2024-05-24T09:17:51.867Z",
+      reviewer: "User3"
     },
     {
       documentId: "007",
@@ -221,9 +157,171 @@ export default function SuperUserAllDocumnetTable() {
       owner: "dora",
       createdAt: "2024-05-24T09:17:51.867Z",
       editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z"
+      reviewAt: "2024-05-24T09:17:51.867Z",
+      reviewer: "User4"
     },
   ])
+
+  const initialReviewerObjs: reviewerObjType[] = data.map(({documentId, reviewer}) => {
+    // console.log("init")
+    return {
+      documentId: documentId,
+      reviewer: reviewer
+    }
+  })
+
+  const [reviewerObjs, setReviewerObjs] = React.useState<reviewerObjType[]>(initialReviewerObjs)
+
+  const setReviewerObj = (documentId: string, reviewer: string) => {
+    // console.log("documentId: ", documentId)
+    // console.log("new reviewer: ", reviewer)
+    
+    setReviewerObjs(reviewerObjs.map(obj => {
+      // console.log(obj.documentId === documentId)
+      if (obj.documentId === documentId) {
+        return {
+          documentId: documentId,
+          reviewer: reviewer
+        }
+      }
+      return obj
+    }))
+  }
+
+  const columns: ColumnDef<SuperUserAllDocumnetTableProps>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      id: "文件編號",
+      accessorKey: "documentId",
+      header: ({column}) => {
+        return (
+          <RowSortingBtn column={column} header="文件編號" />
+        )
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="ml-5">{row.original.documentId}</div>
+        )
+      }
+    },
+    {
+      id: "標題",
+      accessorKey: "title",
+      header: "標題",
+      cell: ({ row }) => {
+        return (
+          <div className="min-w-[10rem]">{row.original.title}</div>
+        )
+      }
+    },
+    {
+      id: "狀態",
+      accessorKey: "status",
+      header: "狀態",
+      cell: ({ row }) => {
+        const status = row.original.status.toLowerCase()
+        return (
+          <>
+            {status === "pass" 
+            ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-green-500 rounded-full"> {status} </span>)
+            : status === "reject"
+            ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded-full"> {status} </span>)
+            : status === "review"
+            ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full"> {status} </span>)
+            : (<span className="px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-full"> {status} </span>)}
+          </>
+        )
+      }
+    },
+    {
+      id: "所有者",
+      accessorKey: "owner",
+      header: ({column}) => {
+        return (
+          <RowSortingBtn column={column} header="所有者" />
+        )
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="text-center">{row.original.owner}</div>
+        )
+      }
+    },
+    {
+      id: '建立-修改-日期',
+      header: ({ column }) => {
+        return (
+          <div>建立日期 / 修改日期</div>
+        )
+      },
+      cell: ({row}) => {
+        const {createdAt, editAt} = row.original
+        const [createDate, editDate] = [createdAt, editAt].map(date => format(new Date(date), 'MM/dd/yyyy'))
+        return (
+            <div> {createDate} / {editDate}</div>
+        )
+      }
+    },
+    {
+      id: "近期審核日期",
+      accessorKey: "reviewAt",
+      header: "近期審核日期",
+      cell: ({ row }) => {
+        return (
+          <div>{format(new Date(row.original.reviewAt), 'MM/dd/yyyy')}</div>
+        )
+      }
+    },
+    {
+      id: "指定送審者",
+      accessorKey: "reviewer",
+      header: ({ column }) => (
+        <div className="w-20">指定送審者</div>
+      ),
+      cell: ({ row }) => {
+        // console.log("row: ", row.original.documentId)
+        const currentObj = reviewerObjs.find(obj => obj.documentId === row.original.documentId)
+        if(!currentObj)
+          throw Error("Reviewer Object not found!")
+
+        return (
+          <SuperUserAllDocumnetSelectUser 
+            reviewerObj={currentObj}
+            setReviewerObj={setReviewerObj}
+          />
+        )
+      },
+    },
+    {
+      id: "審核紀錄",
+      cell: ({ row }) => {
+        return (
+          <SuperUserAllDocumnetShowReviewDialog documentId={row.original.documentId} />
+        )
+      }
+    }
+  ]
 
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -250,7 +348,8 @@ export default function SuperUserAllDocumnetTable() {
         "documentId": row.original.documentId,
         "title": row.original.title,
         "status": row.original.status,
-        "owner": row.original.owner
+        "owner": row.original.owner,
+        "assignUser" : row.original.reviewer
       }
     })
   }
@@ -275,7 +374,7 @@ export default function SuperUserAllDocumnetTable() {
     },
     initialState: {
       pagination: {
-        pageSize: 5
+        pageSize: Pagesize
       }
     }
   })
@@ -285,17 +384,17 @@ export default function SuperUserAllDocumnetTable() {
       <div className="flex items-center py-4">
         <Input
           id="filter-owner"
-          placeholder="Filter Owner..."
-          value={(table.getColumn("owner")?.getFilterValue() as string) ?? ""}
+          placeholder="過濾所有者..."
+          value={(table.getColumn("所有者")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("owner")?.setFilterValue(event.target.value)
+            table.getColumn("所有者")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+              顯示欄位 <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -320,7 +419,8 @@ export default function SuperUserAllDocumnetTable() {
         </DropdownMenu>
       </div>
       <div className="space-x-2 py-2">
-        <Button>送審</Button>
+        {/* <Button>送審</Button> */}
+        <SuperUserAssignReviewerBtn rowSelectedDocumentInfo={getRowSelectedDocumentInfo()} reviewerObjs={reviewerObjs} />
         {/* <Button onClick={deleteDocumentHandler}>刪除</Button> */}
         <SuperUserDeleteDocument rowSelectedDocumentInfo={getRowSelectedDocumentInfo()} deleteDocumentHandler={deleteDocumentHandler} />
       </div>
@@ -381,7 +481,7 @@ export default function SuperUserAllDocumnetTable() {
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div> */}
         <div className="space-x-2">
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
@@ -399,7 +499,29 @@ export default function SuperUserAllDocumnetTable() {
             disabled={!table.getCanNextPage()}
           >
             Next
-          </Button>
+          </Button> */}
+          <Button onClick={()=>switchPagehandler(1, setPageIdx)}>第一頁</Button>
+          {
+            pageIdx-1 > 0 ?
+              <Button onClick={()=>switchPagehandler(pageIdx-1, setPageIdx)}>{pageIdx-1}</Button>
+              : null
+          }
+          {
+            Array.from({length: Math.min(4, lastPageIdx-pageIdx+1)}, (_, i) => i + pageIdx).map((page) => (
+              <Button key={page} 
+                      onClick={()=>switchPagehandler(page, setPageIdx)}
+                      className={page === pageIdx ? "bg-blue-500 text-white" : ""}
+              >
+                {page}
+              </Button>
+            ))
+          }
+          {
+            pageIdx-1 > 0 
+              ? null
+              : <Button onClick={()=>switchPagehandler(pageIdx+4, setPageIdx)}>{pageIdx+4}</Button>
+          }
+          <Button onClick={()=>switchPagehandler(lastPageIdx, setPageIdx)}>最後一頁</Button>
         </div>
       </div>
     </div>

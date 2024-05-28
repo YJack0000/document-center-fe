@@ -22,17 +22,20 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import { rowSelectedDocumentInfoType } from './type'
 
-type rowSelectedDocumentInfoType = {
-  documentId: string,
-  title: string,
-  status: string,
-  owner: string,
-}
 
 type SuperUserDeleteDocumentProps = {
   rowSelectedDocumentInfo: rowSelectedDocumentInfoType[],
   deleteDocumentHandler: () => void
+}
+
+async function deleteDocument({documentId}: {documentId: string}) {
+  const response = await fetch(`/api/documents/${documentId}`, {
+    method: 'DELETE',
+  })
+  const data = await response.json()
+  return data
 }
 
 export default function SuperUserDeleteDocument( {
