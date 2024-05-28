@@ -31,6 +31,12 @@ type reviewHistoryDataType = {
   createAt: string,
 }
 
+async function fetchReviewHistoryData({documentId}: {documentId: string}) {
+  const response = await fetch(`/api/reviews/${documentId}`)
+  const data = await response.json()
+  return data
+}
+
 export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {documentId: string}) {
   const initData = Data.Data.map((data) => {
     return {

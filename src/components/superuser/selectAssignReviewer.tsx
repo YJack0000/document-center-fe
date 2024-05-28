@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useEffect } from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -18,15 +19,27 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { CommandList } from "cmdk"
+import { use } from "chai"
+
+import { reviewerObjType } from './type'
 
 type SuperUserAllDocumnetSelectUserType = {
   userId: string
   userName: string
 }
 
-export default function SuperUserAllDocumnetSelectUser() {
+type SuperUserAllDocumnetSelectUserProps = {
+  reviewerObj: reviewerObjType,
+  setReviewerObj: any
+}
+
+export default function SuperUserAllDocumnetSelectUser({
+  reviewerObj, setReviewerObj
+} : SuperUserAllDocumnetSelectUserProps
+){
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+  const [value, setValue] = React.useState(reviewerObj.reviewer)
+
 
   const [userlist, setUserlist] = React.useState<SuperUserAllDocumnetSelectUserType[]>([
     {
@@ -71,7 +84,9 @@ export default function SuperUserAllDocumnetSelectUser() {
                 key={user.userId}
                 value={user.userName}
                 onSelect={(currentValue) => {
+                  console.log(currentValue)
                   setValue(currentValue === value ? "" : currentValue)
+                  setReviewerObj(reviewerObj.documentId, currentValue)
                   setOpen(false)
                 }}
               >
