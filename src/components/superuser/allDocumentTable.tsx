@@ -43,9 +43,10 @@ import {
 import SuperUserAllDocumnetSelectUser from "./selectAssignReviewer"
 import SuperUserAllDocumnetShowReviewDialog from "./reviewHistory"
 // import { createDeflate } from "zlib"
-import { format } from 'date-fns';
+import { format, min } from 'date-fns';
 import SuperUserDeleteDocument from "./deleteDocument"
 import RowSortingBtn from "./rowSortingBtn"
+import { Source_Serif_4 } from "next/font/google"
 
 
 type SuperUserAllDocumnetTableProps = {
@@ -184,25 +185,26 @@ export const columns: ColumnDef<SuperUserAllDocumnetTableProps>[] = [
   }
 ]
 
-// async function fetchData(page: number, pageSize: number) {
-//   const response = await fetch(`/api/data?page=${page}&pageSize=${pageSize}`);
-//   const data = await response.json();
-//   return data;
-// }
+async function fetchData(page: number, pageSize: number) {
+  const response = await fetch(`/api/data?page=${page}&pageSize=${pageSize}`);
+  const data = await response.json();
+  return data;
+}
 
-// async function fetchDataTotalCount() {
-//   const response = await fetch(`/api/data/total-count`);
-//   const data = await response.json();
-//   return data;
-// }
+async function fetchDataTotalCount() {
+  const response = await fetch(`/api/data/total-count`);
+  const data = await response.json();
+  return data;
+}
 
-// const switchPagehandler = (page: number, setPageIdx: (p: number) => void) => {
-//   console.log("switch page to: ", page)
-//   setPageIdx(page)
-// }
+const switchPagehandler = (page: number, setPageIdx: (p: number) => void) => {
+  console.log("switch page to: ", page)
+  setPageIdx(page)
+}
 
 export default function SuperUserAllDocumnetTable() {
   const [pageIdx, setPageIdx] = React.useState(1)
+  const [lastPageIdx, setLastPageIdx] = React.useState(10)
   const [data, setData] = React.useState<SuperUserAllDocumnetTableProps[]>([
     {
       documentId: "001",
@@ -425,7 +427,7 @@ export default function SuperUserAllDocumnetTable() {
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div> */}
         <div className="space-x-2">
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
@@ -443,15 +445,15 @@ export default function SuperUserAllDocumnetTable() {
             disabled={!table.getCanNextPage()}
           >
             Next
-          </Button>
-          {/* <Button onClick={()=>switchPagehandler(1, setPageIdx)}>第一頁</Button>
+          </Button> */}
+          <Button onClick={()=>switchPagehandler(1, setPageIdx)}>第一頁</Button>
           {
             pageIdx-1 > 0 ?
               <Button onClick={()=>switchPagehandler(pageIdx-1, setPageIdx)}>{pageIdx-1}</Button>
               : null
           }
           {
-            Array.from({length: 4}, (_, i) => i + pageIdx).map((page) => (
+            Array.from({length: Math.min(4, lastPageIdx-pageIdx+1)}, (_, i) => i + pageIdx).map((page) => (
               <Button key={page} 
                       onClick={()=>switchPagehandler(page, setPageIdx)}
                       className={page === pageIdx ? "bg-blue-500 text-white" : ""}
@@ -460,7 +462,12 @@ export default function SuperUserAllDocumnetTable() {
               </Button>
             ))
           }
-          <Button onClick={()=>switchPagehandler(10, setPageIdx)}>最後一頁</Button> */}
+          {
+            pageIdx-1 > 0 
+              ? null
+              : <Button onClick={()=>switchPagehandler(pageIdx+4, setPageIdx)}>{pageIdx+4}</Button>
+          }
+          <Button onClick={()=>switchPagehandler(lastPageIdx, setPageIdx)}>最後一頁</Button>
         </div>
       </div>
     </div>
