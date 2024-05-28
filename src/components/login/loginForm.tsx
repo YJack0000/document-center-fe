@@ -1,5 +1,5 @@
 import * as React from "react";
-import GoogleIcon from "@/components/icon/GoogleIcon";
+import GithubIcon from "@/components/icon/GithubIcon";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,11 +24,11 @@ export default function LoginForm() {
           variant="outline"
           className="w-full p-2"
           onClick={() => {
-            router.push("https://document-center.cerana.tech/api/auth/google");
+            router.push("https://document-center.cerana.tech/api/auth/github");
           }}
         >
-          <GoogleIcon />
-          <span className="ml-2">Login with Google</span>
+          <GithubIcon />
+          <span className="ml-2">Login with Github</span>
         </Button>
       </CardContent>
     </Card>
