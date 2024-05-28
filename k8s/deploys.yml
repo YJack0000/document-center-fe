@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: document-center-fe
-        image: yjack0000cs12/document-center-fe:v16
+        image: yjack0000cs12/document-center-fe:v19
         ports:
         - containerPort: 3000
         livenessProbe:
