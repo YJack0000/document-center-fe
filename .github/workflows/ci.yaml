@@ -27,10 +27,6 @@ jobs:
     - name: Install dependencies for frontend
       run: |
         npm ci
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
 
     - name: Cypress run
       uses: cypress-io/github-action@v6
