@@ -82,25 +82,37 @@ export const columns: ColumnDef<SuperUserAllDocumnetTableProps>[] = [
     enableHiding: false,
   },
   {
+    id: "文件編號",
     accessorKey: "documentId",
     header: ({column}) => {
       return (
-        <RowSortingBtn column={column} header="Document ID" />
+        <RowSortingBtn column={column} header="文件編號" />
+      )
+    },
+    cell: ({ row }) => {
+      return (
+        <div className="ml-5">{row.original.documentId}</div>
       )
     }
   },
   {
+    id: "標題",
     accessorKey: "title",
-
-    header: "Title",
+    header: "標題",
+    cell: ({ row }) => {
+      return (
+        <div className="min-w-[10rem]">{row.original.title}</div>
+      )
+    }
   },
   {
+    id: "狀態",
     accessorKey: "status",
-    header: "Status",
+    header: "狀態",
     cell: ({ row }) => {
       const status = row.original.status.toLowerCase()
       return (
-        <div>
+        <>
           {status === "pass" 
           ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-green-500 rounded-full"> {status} </span>)
           : status === "reject"
@@ -108,23 +120,29 @@ export const columns: ColumnDef<SuperUserAllDocumnetTableProps>[] = [
           : status === "review"
           ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full"> {status} </span>)
           : (<span className="px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-full"> {status} </span>)}
-        </div>
+        </>
       )
     }
   },
   {
+    id: "所有者",
     accessorKey: "owner",
     header: ({column}) => {
       return (
-        <RowSortingBtn column={column} header="Owner" />
+        <RowSortingBtn column={column} header="所有者" />
+      )
+    },
+    cell: ({ row }) => {
+      return (
+        <div className="text-center">{row.original.owner}</div>
       )
     }
   },
   {
-    id: 'create-edit-date',
+    id: '建立-修改-日期',
     header: ({ column }) => {
       return (
-        <div>Created Date / Last Edit Date</div>
+        <div>建立日期 / 修改日期</div>
       )
     },
     cell: ({row}) => {
@@ -136,12 +154,20 @@ export const columns: ColumnDef<SuperUserAllDocumnetTableProps>[] = [
     }
   },
   {
+    id: "近期審核日期",
     accessorKey: "reviewAt",
-    header: "Last Review",
+    header: "近期審核日期",
+    cell: ({ row }) => {
+      return (
+        <div>{format(new Date(row.original.reviewAt), 'MM/dd/yyyy')}</div>
+      )
+    }
   },
   {
-    id: "assign-review",
-    header: "Assign Review",
+    id: "指定送審者",
+    header: ({ column }) => (
+      <div className="w-20">指定送審者</div>
+    ),
     cell: ({ row }) => {
       return (
         <SuperUserAllDocumnetSelectUser />
@@ -149,7 +175,7 @@ export const columns: ColumnDef<SuperUserAllDocumnetTableProps>[] = [
     },
   },
   {
-    id: "show-review-history",
+    id: "審核紀錄",
     cell: ({ row }) => {
       return (
         <SuperUserAllDocumnetShowReviewDialog documentId={row.original.documentId} />
@@ -158,7 +184,25 @@ export const columns: ColumnDef<SuperUserAllDocumnetTableProps>[] = [
   }
 ]
 
+// async function fetchData(page: number, pageSize: number) {
+//   const response = await fetch(`/api/data?page=${page}&pageSize=${pageSize}`);
+//   const data = await response.json();
+//   return data;
+// }
+
+// async function fetchDataTotalCount() {
+//   const response = await fetch(`/api/data/total-count`);
+//   const data = await response.json();
+//   return data;
+// }
+
+// const switchPagehandler = (page: number, setPageIdx: (p: number) => void) => {
+//   console.log("switch page to: ", page)
+//   setPageIdx(page)
+// }
+
 export default function SuperUserAllDocumnetTable() {
+  const [pageIdx, setPageIdx] = React.useState(1)
   const [data, setData] = React.useState<SuperUserAllDocumnetTableProps[]>([
     {
       documentId: "001",
@@ -285,17 +329,17 @@ export default function SuperUserAllDocumnetTable() {
       <div className="flex items-center py-4">
         <Input
           id="filter-owner"
-          placeholder="Filter Owner..."
-          value={(table.getColumn("owner")?.getFilterValue() as string) ?? ""}
+          placeholder="過濾所有者..."
+          value={(table.getColumn("所有者")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("owner")?.setFilterValue(event.target.value)
+            table.getColumn("所有者")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+              顯示欄位 <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -400,6 +444,23 @@ export default function SuperUserAllDocumnetTable() {
           >
             Next
           </Button>
+          {/* <Button onClick={()=>switchPagehandler(1, setPageIdx)}>第一頁</Button>
+          {
+            pageIdx-1 > 0 ?
+              <Button onClick={()=>switchPagehandler(pageIdx-1, setPageIdx)}>{pageIdx-1}</Button>
+              : null
+          }
+          {
+            Array.from({length: 4}, (_, i) => i + pageIdx).map((page) => (
+              <Button key={page} 
+                      onClick={()=>switchPagehandler(page, setPageIdx)}
+                      className={page === pageIdx ? "bg-blue-500 text-white" : ""}
+              >
+                {page}
+              </Button>
+            ))
+          }
+          <Button onClick={()=>switchPagehandler(10, setPageIdx)}>最後一頁</Button> */}
         </div>
       </div>
     </div>
