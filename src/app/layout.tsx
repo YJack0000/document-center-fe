@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/sidebar";
 import { useEffect, useState } from "react";
 import UserContext from "@/context/userContext";
 import { useRouter } from "next/navigation";
+import { verifyJwt } from "@/lib/utils";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -17,7 +18,24 @@ export default function RootLayout({
 
   useEffect(() => {
     if (!user) {
-      router.push("/login");
+      // from cookie read access token
+      // if access token is valid, set user
+      // else redirect to login
+      let findUser = false;
+      document.cookie.split(";").forEach((cookie) => {
+        const [key, value] = cookie.split("=");
+        if (key === "access_token") {
+          const user = verifyJwt(value);
+          if (user) {
+            findUser = true;
+            setUser(verifyJwt(value));
+            router.push("/");
+          }
+        }
+      });
+      if (!findUser) {
+        router.push("/login");
+      }
     }
   }, [user]);
   return (

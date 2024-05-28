@@ -18,3 +18,18 @@ export function formatDate(input: string | number): string {
 export function absoluteUrl(path: string) {
   return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
 }
+
+export function verifyJwt(token: string) {
+  try {
+    const [, payload] = token.split(".");
+    const decoded = JSON.parse(atob(payload));
+
+    // Check if the token is expired
+    if (decoded.exp < Date.now() / 1000) {
+      return null;
+    }
+    return decoded;
+  } catch (error) {
+    return null;
+  }
+}
