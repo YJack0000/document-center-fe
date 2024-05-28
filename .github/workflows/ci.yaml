@@ -47,12 +47,12 @@ jobs:
           file: Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/document-center-fe:v${{ github.run_number }}
-      # - name: Update k8s config
-      #   run: |
-      #     sed -i "s|yjack0000cs12/document-center-fe:v[0-9]*|yjack0000cs12/document-center-fe:v${{ github.run_number }}|" ./k8s/deploys.yml
-      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      #     git config --global user.name "github-actions[bot]"
-      #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git          
-      #     git add ./k8s/deploys.yml
-      #     git commit -m "Update deployment image to v${{ github.run_number }}"
-      #     git push
+      - name: Update k8s config
+        run: |
+          sed -i "s|yjack0000cs12/document-center-fe:v[0-9]*|yjack0000cs12/document-center-fe:v${{ github.run_number }}|" ./k8s/deploys.yml
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git          
+          git add ./k8s/deploys.yml
+          git commit -m "Update deployment image to v${{ github.run_number }}"
+          git push
