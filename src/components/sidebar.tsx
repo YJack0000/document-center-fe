@@ -1,17 +1,33 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
+  const router = useRouter();
   return (
     <div className={cn("pb-12", className)}>
       <div className="space-y-4 py-4">
-        <h1 className="text-2xl font-semibold text-center">Document Center</h1>
+        <h1
+          className="text-2xl font-semibold text-center"
+          onClick={() => {
+            router.push("/");
+          }}
+        >
+          Document Center
+        </h1>
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             文件列表
           </h2>
           <div className="space-y-1">
-            <Button variant="secondary" className="w-full justify-start">
+            <Button
+              variant="secondary"
+              className="w-full justify-start"
+              onClick={() => {
+                router.push("/documents/public");
+              }}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -27,7 +43,13 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
               </svg>
               公開文件
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => {
+                router.push("/documents/me");
+              }}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -71,7 +93,13 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
             管理者
           </h2>
           <div className="space-y-1">
-            <Button variant="ghost" className="w-full justify-start">
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => {
+                router.push("/superuser/documents");
+              }}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
