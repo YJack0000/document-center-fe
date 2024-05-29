@@ -29,7 +29,6 @@ export default function RootLayout({
           if (user) {
             findUser = true;
             setUser(verifyJwt(value));
-            router.push("/");
           }
         }
       });
