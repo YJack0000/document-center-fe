@@ -61,7 +61,7 @@ export const columns: ColumnDef<Document>[] = [
     accessorKey: "owner",
     header: "擁有者",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("owner")["name"]}</div>
+      <div className="capitalize">{(row.getValue("owner") as any)["name"]}</div>
     ),
   },
   {
