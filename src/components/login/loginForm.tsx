@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import GoogleIcon from "../icon/GoogleIcon";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -29,6 +30,16 @@ export default function LoginForm() {
         >
           <GithubIcon />
           <span className="ml-2">Login with Github</span>
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full p-2 mt-2"
+          onClick={() => {
+            router.push("https://document-center.cerana.tech/api/auth/google");
+          }}
+        >
+          <GoogleIcon />
+          <span className="ml-2">Login with Google</span>
         </Button>
       </CardContent>
     </Card>
