@@ -23,7 +23,7 @@ import { CommandList } from "cmdk"
 
 import { reviewerObjType } from './type'
 import useSWR from "swr"
-import { fetcher } from "@/services/superuser/allDocumentsTable"
+import { DefaultFetcher } from "@/services/superuser/Fetcher"
 import { FetchTypeWrapper, FetchUsersData } from "@/services/superuser/type"
 
 import { urls } from "@/services/superuser/url"
@@ -57,7 +57,7 @@ export default function SuperuserAllDocumnetSelectUser({
 
   const { data, error } = useSWR<FetchUsersType>( 
     shouldFetch ? urls.GET_USERS_URL
-                : null, fetcher)
+                : null, DefaultFetcher)
   // console.log(shouldFetch)
 
   if(error) {
@@ -102,7 +102,7 @@ export default function SuperuserAllDocumnetSelectUser({
                 value={user.userName}
                 onSelect={(currentValue) => {
                   setValue(currentValue === value ? "" : currentValue)
-                  setReviewerObj(reviewerObj.documentId, currentValue)
+                  setReviewerObj(reviewerObj.documentId, currentValue === value ? "" : currentValue)
                   setOpen(false)
                 }}
               >

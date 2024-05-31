@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -17,7 +17,8 @@ import {
 import { 
   ArrowUpDown,
   ChevronDown,
-  Rewind, 
+  Rewind,
+  User, 
   // MoreHorizontal 
 } from "lucide-react"
 
@@ -54,7 +55,7 @@ import { Source_Serif_4 } from "next/font/google"
 import { reviewerObjType, rowSelectedDocumentInfoType } from './type'
 import { FetchTypeWrapper, FetchAllDocumentsData } from "@/services/superuser/type"
 import useSWR from "swr"
-import { fetcher } from "@/services/superuser/allDocumentsTable"
+import { DefaultFetcher } from "@/services/superuser/Fetcher"
 
 import { urls } from "@/services/superuser/url"
 import { use } from "chai"
@@ -86,24 +87,28 @@ function convertToSuperuserTableProps(data: FetchAllDocumentsData): superuserAll
 }
 
 const switchPagehandler = (page: number, setPageIdx: (p: number) => void) => {
-  console.log("switch page to: ", page)
+  // console.log("switch page to: ", page)
   setPageIdx(page)
 }
 
 
 export default function SuperUserAllDocumnetTable() {
 
-  const Pagesize = 5
-  const [pageIdx, setPageIdx] = React.useState(1)
-  const [lastPageIdx, setLastPageIdx] = React.useState(10)
+  const [pageIdx, setPageIdx] = useState(1)
+  const [lastPageIdx, setLastPageIdx] = useState(1)
 
-  const { data: allDocumentsFetched, error } = useSWR<fetchAllDocumentsType>(urls.GET_DOCUMENT_ALL_URL, fetcher)
+  const { data: allDocumentsFetched, isLoading, error } 
+      = useSWR<fetchAllDocumentsType>(`${urls.GET_DOCUMENT_ALL_URL}?page=${pageIdx}&limit=${urls.pageSize}`, 
+                                        DefaultFetcher)
 
-  const [ allDocuments, setAllDocuments ] = React.useState<superuserAllDocumnetTableProps[]>(
+  const [ allDocuments, setAllDocuments ] = useState<superuserAllDocumnetTableProps[]>(
     allDocumentsFetched 
     ? allDocumentsFetched.data.map((docFetched) => convertToSuperuserTableProps(docFetched))
     : []
   )
+
+  const [data, setData] = useState<superuserAllDocumnetTableProps[]>(allDocuments)
+  const [reviewerObjs, setReviewerObjs] = useState<reviewerObjType[]>([])
 
   useEffect(() => {
     setAllDocuments(
@@ -111,102 +116,29 @@ export default function SuperUserAllDocumnetTable() {
       ? allDocumentsFetched.data.map((docFetched) => convertToSuperuserTableProps(docFetched))
       : []
     )
+    setLastPageIdx(
+      allDocumentsFetched 
+      ? allDocumentsFetched.total
+      : 1
+    )
   }, [allDocumentsFetched])
 
-  if(error) {
-    // throw new Error('An error occurred while fetching all documents.')
-  }
-  
-  // const [data, setData] = React.useState<superuserAllDocumnetTableProps[]>(allDocuments)
-  const [data, setData] = React.useState<superuserAllDocumnetTableProps[]>([
-    {
-      documentId: "001",
-      title: "INV001",
-      status: "pass",
-      owner: "User1",
-      createdAt: "2024-05-24T09:17:51.867Z",
-      editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z",
-      reviewer: "User2"
-    },
-    {
-      documentId: "002",
-      title: "INV002",
-      status: "reject",
-      owner: "yuchang",
-      createdAt: "2024-05-24T09:17:51.867Z",
-      editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z",
-      reviewer: "User3"
-    },
-    {
-      documentId: "003",
-      title: "INV003",
-      status: "review",
-      owner: "yjack",
-      createdAt: "2024-05-24T09:17:51.867Z",
-      editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z",
-      reviewer: "User4"
-    },
-    {
-      documentId: "004",
-      title: "INV004",
-      status: "edit",
-      owner: "dora",
-      createdAt: "2024-05-24T09:17:51.867Z",
-      editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z",
-      reviewer: "User1"
-    },
-    {
-      documentId: "005",
-      title: "INV005",
-      status: "pass",
-      owner: "yuchang",
-      createdAt: "2024-05-24T09:17:51.867Z",
-      editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z",
-      reviewer: "User2"
-    },
-    {
-      documentId: "006",
-      title: "INV006",
-      status: "reject",
-      owner: "yjack",
-      createdAt: "2024-05-24T09:17:51.867Z",
-      editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z",
-      reviewer: "User3"
-    },
-    {
-      documentId: "007",
-      title: "INV007",
-      status: "review",
-      owner: "dora",
-      createdAt: "2024-05-24T09:17:51.867Z",
-      editAt: "2024-05-24T09:17:51.867Z",
-      reviewAt: "2024-05-24T09:17:51.867Z",
-      reviewer: "User4"
-    },
-  ])
-
-  const initialReviewerObjs: reviewerObjType[] = data.map(({documentId, reviewer}) => {
-    // console.log("init")
-    return {
-      documentId: documentId,
-      reviewer: reviewer
+  useEffect(() => {
+    // console.log("set data")
+    setData(allDocuments)
+    setReviewerObjs(allDocuments.map(doc => {
+      return {
+        documentId: doc.documentId,
+        reviewer: doc.reviewer
+      }
     }
-  })
+    ))
+  }, [allDocuments])
 
-  const [reviewerObjs, setReviewerObjs] = React.useState<reviewerObjType[]>(initialReviewerObjs)
 
   const setReviewerObj = (documentId: string, reviewer: string) => {
-    // console.log("documentId: ", documentId)
-    // console.log("new reviewer: ", reviewer)
     
     setReviewerObjs(reviewerObjs.map(obj => {
-      // console.log(obj.documentId === documentId)
       if (obj.documentId === documentId) {
         return {
           documentId: documentId,
@@ -329,10 +261,7 @@ export default function SuperUserAllDocumnetTable() {
         <div className="w-20">指定送審者</div>
       ),
       cell: ({ row }) => {
-        // console.log("row: ", row.original.documentId)
-        const currentObj = reviewerObjs.find(obj => obj.documentId === row.original.documentId)
-        if(!currentObj)
-          throw Error("Reviewer Object not found!")
+        const currentObj = reviewerObjs.find(obj => obj.documentId === row.original.documentId) as reviewerObjType
 
         return (
           <SuperUserAllDocumnetSelectUser 
@@ -352,13 +281,13 @@ export default function SuperUserAllDocumnetTable() {
     }
   ]
 
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
 
   const deleteDocumentHandler = () => {
     console.log("delete document")
@@ -403,10 +332,19 @@ export default function SuperUserAllDocumnetTable() {
     },
     initialState: {
       pagination: {
-        pageSize: Pagesize
+        pageSize: urls.pageSize
       }
     }
   })
+
+  
+  if(isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if(error) {
+    throw new Error('An error occurred while fetching all documents.')
+  }
 
   return (
     <div className="w-full min-w-[70vw]">
@@ -546,9 +484,9 @@ export default function SuperUserAllDocumnetTable() {
             ))
           }
           {
-            pageIdx-1 > 0 
-              ? null
-              : <Button onClick={()=>switchPagehandler(pageIdx+4, setPageIdx)}>{pageIdx+4}</Button>
+            pageIdx+4 < lastPageIdx ?
+              <Button onClick={()=>switchPagehandler(pageIdx+4, setPageIdx)}>{pageIdx+4}</Button>
+              : null
           }
           <Button onClick={()=>switchPagehandler(lastPageIdx, setPageIdx)}>最後一頁</Button>
         </div>
