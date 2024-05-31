@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useEffect } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -41,19 +42,26 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import SuperUserAllDocumnetSelectUser from "./selectAssignReviewer"
-import SuperUserAllDocumnetShowReviewDialog from "./reviewHistory"
+import SuperUserAllDocumnetSelectUser from "./SelectAssignReviewer"
+import SuperUserAllDocumnetShowReviewDialog from "./ReviewHistory"
 // import { createDeflate } from "zlib"
 import { format, min, set } from 'date-fns';
-import SuperUserDeleteDocument from "./deleteDocument"
-import SuperUserAssignReviewerBtn from "./assignReviewerBtn"
-import RowSortingBtn from "./rowSortingBtn"
+import SuperUserDeleteDocument from "./DeleteDocument"
+import SuperUserAssignReviewerBtn from "./AssignReviewerBtn"
+import RowSortingBtn from "./RowSortingBtn"
 import { Source_Serif_4 } from "next/font/google"
 
 import { reviewerObjType, rowSelectedDocumentInfoType } from './type'
+import { FetchTypeWrapper, FetchAllDocumentsData } from "@/services/superuser/type"
+import useSWR from "swr"
+import { fetcher } from "@/services/superuser/allDocumentsTable"
 
+import { urls } from "@/services/superuser/url"
+import { use } from "chai"
 
-type SuperUserAllDocumnetTableProps = {
+type fetchAllDocumentsType = FetchTypeWrapper<FetchAllDocumentsData>
+
+type superuserAllDocumnetTableProps = {
   documentId: string,
   title: string,
   status: string,
@@ -64,17 +72,17 @@ type SuperUserAllDocumnetTableProps = {
   reviewer: string
 }
 
-
-async function fetchData(page: number, pageSize: number) {
-  const response = await fetch(`/api/data?page=${page}&pageSize=${pageSize}`);
-  const data = await response.json();
-  return data;
-}
-
-async function fetchDataTotalCount() {
-  const response = await fetch(`/api/data/total-count`);
-  const data = await response.json();
-  return data;
+function convertToSuperuserTableProps(data: FetchAllDocumentsData): superuserAllDocumnetTableProps {
+  return {
+    documentId: data.id,
+    title: data.title,
+    status: data.status,
+    owner: data.owner.name,
+    createdAt: data.createAt,
+    editAt: data.updateAt,
+    reviewAt: data.updateAt,
+    reviewer: ""
+  }
 }
 
 const switchPagehandler = (page: number, setPageIdx: (p: number) => void) => {
@@ -88,8 +96,29 @@ export default function SuperUserAllDocumnetTable() {
   const Pagesize = 5
   const [pageIdx, setPageIdx] = React.useState(1)
   const [lastPageIdx, setLastPageIdx] = React.useState(10)
+
+  const { data: allDocumentsFetched, error } = useSWR<fetchAllDocumentsType>(urls.GET_DOCUMENT_ALL_URL, fetcher)
+
+  const [ allDocuments, setAllDocuments ] = React.useState<superuserAllDocumnetTableProps[]>(
+    allDocumentsFetched 
+    ? allDocumentsFetched.data.map((docFetched) => convertToSuperuserTableProps(docFetched))
+    : []
+  )
+
+  useEffect(() => {
+    setAllDocuments(
+      allDocumentsFetched 
+      ? allDocumentsFetched.data.map((docFetched) => convertToSuperuserTableProps(docFetched))
+      : []
+    )
+  }, [allDocumentsFetched])
+
+  if(error) {
+    // throw new Error('An error occurred while fetching all documents.')
+  }
   
-  const [data, setData] = React.useState<SuperUserAllDocumnetTableProps[]>([
+  // const [data, setData] = React.useState<superuserAllDocumnetTableProps[]>(allDocuments)
+  const [data, setData] = React.useState<superuserAllDocumnetTableProps[]>([
     {
       documentId: "001",
       title: "INV001",
@@ -188,7 +217,7 @@ export default function SuperUserAllDocumnetTable() {
     }))
   }
 
-  const columns: ColumnDef<SuperUserAllDocumnetTableProps>[] = [
+  const columns: ColumnDef<superuserAllDocumnetTableProps>[] = [
     {
       id: "select",
       header: ({ table }) => (

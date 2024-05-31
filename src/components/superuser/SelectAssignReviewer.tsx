@@ -19,46 +19,62 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { CommandList } from "cmdk"
-import { use } from "chai"
+
 
 import { reviewerObjType } from './type'
+import useSWR from "swr"
+import { fetcher } from "@/services/superuser/allDocumentsTable"
+import { FetchTypeWrapper, FetchUsersData } from "@/services/superuser/type"
 
-type SuperUserAllDocumnetSelectUserType = {
+import { urls } from "@/services/superuser/url"
+
+type SuperuserAllDocumnetSelectUserType = {
   userId: string
   userName: string
 }
 
-type SuperUserAllDocumnetSelectUserProps = {
+type SuperuserAllDocumnetSelectUserProps = {
   reviewerObj: reviewerObjType,
   setReviewerObj: any
 }
 
-export default function SuperUserAllDocumnetSelectUser({
+type FetchUsersType = FetchTypeWrapper<FetchUsersData>
+
+export default function SuperuserAllDocumnetSelectUser({
   reviewerObj, setReviewerObj
-} : SuperUserAllDocumnetSelectUserProps
+} : SuperuserAllDocumnetSelectUserProps
 ){
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState(reviewerObj.reviewer)
 
+  const [shouldFetch, setShouldFetch] = React.useState(false);
 
-  const [userlist, setUserlist] = React.useState<SuperUserAllDocumnetSelectUserType[]>([
-    {
-      userId: "001",
-      userName: "User1"
-    }, 
-    {
-      userId: "002",
-      userName: "User2"
-    }, 
-    {
-      userId: "003",
-      userName: "User3"
-    }, 
-    {
-      userId: "004",
-      userName: "User4"
+  const enableFetch = () => {
+    setShouldFetch(true);
+  }
+
+  const [userlist, setUserlist] = React.useState<SuperuserAllDocumnetSelectUserType[]>([])
+
+  const { data, error } = useSWR<FetchUsersType>( 
+    shouldFetch ? urls.GET_USERS_URL
+                : null, fetcher)
+  // console.log(shouldFetch)
+
+  if(error) {
+    throw new Error('An error occurred while fetching the userlist.')
+  }
+  
+  useEffect(() => {
+    if(data) {
+      const users = data.data.map((userObj: any) => {
+        return {
+          userId: userObj.id,
+          userName: userObj.name
+        }
+      })
+      setUserlist(users)
     }
-  ])
+  }, [data]); // Only re-run the effect if data changes
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -68,6 +84,7 @@ export default function SuperUserAllDocumnetSelectUser({
           role="combobox"
           aria-expanded={open}
           className="w-30 justify-between"
+          onClick={enableFetch}
         >
           {value ? value : "請選擇"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -84,7 +101,6 @@ export default function SuperUserAllDocumnetSelectUser({
                 key={user.userId}
                 value={user.userName}
                 onSelect={(currentValue) => {
-                  console.log(currentValue)
                   setValue(currentValue === value ? "" : currentValue)
                   setReviewerObj(reviewerObj.documentId, currentValue)
                   setOpen(false)
