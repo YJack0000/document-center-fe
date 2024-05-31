@@ -21,27 +21,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useMemo } from "react"
 
-import { rowSelectedDocumentInfoType } from './type'
-
+type RowSelectedDocumentInfoType = {
+  documentId: string,
+  title: string,
+  status: string,
+  owner: UserInfo
+  assignUser: UserInfo | null
+}
 
 type SuperUserDeleteDocumentProps = {
-  rowSelectedDocumentInfo: rowSelectedDocumentInfoType[],
-  deleteDocumentHandler: () => void
+  rowSelectedDocumentInfo: RowSelectedDocumentInfoType[],
+  onConfirmDelete: () => void
 }
 
-async function deleteDocument({documentId}: {documentId: string}) {
-  const response = await fetch(`/api/documents/${documentId}`, {
-    method: 'DELETE',
-  })
-  const data = await response.json()
-  return data
-}
-
-export default function SuperUserDeleteDocument( {
+export default function SuperUserDeleteDocument({
   rowSelectedDocumentInfo,
-  deleteDocumentHandler
-} : SuperUserDeleteDocumentProps) {
+  onConfirmDelete,
+}: SuperUserDeleteDocumentProps) {
+  const canSubmit = useMemo(() => {
+    if (rowSelectedDocumentInfo.length === 0) {
+      return false
+    }
+    return rowSelectedDocumentInfo.every((row) => row.assignUser !== null), [rowSelectedDocumentInfo]
+  }, [rowSelectedDocumentInfo])
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -49,9 +54,9 @@ export default function SuperUserDeleteDocument( {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>確定是否要刪除以下文件</DialogTitle>
+          <DialogTitle>刪除文件</DialogTitle>
           <DialogDescription>
-            Make Sure you want to delete the following document
+            請注意，刪除後將無法復原
           </DialogDescription>
         </DialogHeader>
         <Table>
@@ -89,16 +94,22 @@ export default function SuperUserDeleteDocument( {
                     )}
                   </>
                 </TableCell>
-                <TableCell>{row.owner}</TableCell>
+                <TableCell>{row.owner.name}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="submit" variant="outline" onClick={deleteDocumentHandler}>
-              確定
-            </Button>
+            {canSubmit ? (
+              <Button type="submit" variant="outline" onClick={onConfirmDelete} >
+                確定
+              </Button>
+            ) : (
+              <Button type="submit" variant="outline" disabled>
+                有文件尚未指派審核者或是無文件被選取
+              </Button>
+            )}
           </DialogClose>
           <DialogClose asChild>
             <Button variant="outline">取消</Button>

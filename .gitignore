@@ -27,3 +27,5 @@ coverage
 
 ## Ingore next build
 .next
+
+.env

@@ -21,7 +21,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import Data from './reviewHistoryData.json'
 
 type reviewHistoryDataType = {
   documentId: string,
@@ -38,18 +37,8 @@ async function fetchReviewHistoryData({documentId}: {documentId: string}) {
 }
 
 export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {documentId: string}) {
-  const initData = Data.Data.map((data) => {
-    return {
-      documentId: data.documentId,
-      reviewId: data.reviewerId,
-      reviewerName: data.reviewerName,
-      status: data.status,
-      createAt: data.createAt,
-    }
-  })
-  const [historyData, setHistoryData] = useState<reviewHistoryDataType[]>(
-    initData.filter((data) => data.documentId === documentId)
-  )
+  const [historyData, setHistoryData] = useState<reviewHistoryDataType[]>([])
+  
   return (
     <Dialog>
       <DialogTrigger asChild>
