@@ -102,7 +102,7 @@ export default function SuperUserDeleteDocument({
         <DialogFooter>
           <DialogClose asChild>
             {canSubmit ? (
-              <Button type="submit" variant="outline" onClick={deleteDocumentHandler} >
+              <Button type="submit" variant="outline" onClick={onConfirmDelete} >
                 確定
               </Button>
             ) : (

@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/popover"
 import { CommandList } from "cmdk"
 import useSWR from "swr"
-import { PagedWrapper } from "../../../types/wrapper"
 
 type SuperuserAllDocumnetSelectUserProps = {
   reviewer: UserInfo | null
