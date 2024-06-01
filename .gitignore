@@ -29,3 +29,5 @@ coverage
 .next
 
 .env
+
+k8s/secrets.yml
