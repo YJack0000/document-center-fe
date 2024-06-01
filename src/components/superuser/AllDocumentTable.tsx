@@ -18,7 +18,7 @@ import {
   ArrowUpDown,
   ChevronDown,
   Rewind,
-  User, 
+  // User, 
   // MoreHorizontal 
 } from "lucide-react"
 
@@ -28,9 +28,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  // DropdownMenuItem,
-  // DropdownMenuLabel,
-  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -49,14 +46,13 @@ import { format, min, set } from 'date-fns';
 import SuperUserDeleteDocumentButton from "./DeleteDocumentButton"
 import SuperUserAssignReviewerButton from "./AssignReviewerButton"
 import RowSortingBtn from "./RowSortingBtn"
-import { Source_Serif_4 } from "next/font/google"
 
 import useSWR from "swr"
-import { use } from "chai"
 
 const PAGE_SIZE = 10
 
 type FetchedAllDocumentList = PagedWrapper<DocumentDTO>
+type FetchedReviewListPerDocument = PagedWrapper<ReviewInfoDTO>
 
 type SuperuserAllDocumnetTableRow = {
   documentId: string,
@@ -101,26 +97,57 @@ export default function SuperUserAllDocumnetTable() {
 
   useEffect(() => {
     if(data) {
-      console.log("Data fetched: ", data)
       setTableData(data.data.map((document: DocumentDTO) => convertToSuperuserTableRow(document)))
       setLastPageIdx(data.totalPage)
     }
   }, [data])
 
+  
+  const multipleFetcher = async (urls: string | string[]) => {
+    if(Array.isArray(urls)) {
+      const responses = await Promise.all(urls.map(url => fetch(url).then(r => r.json())))
+      return await responses
+    }
+    const response = await fetch(urls).then(r => r.json())
+    return await response
+  }
+  // Create a key for each item in tableData
+  const keys = tableData.map((data) => `/api/reviews/${data.documentId}`)
+  // Fetch the data for each key
+  const { data: reviewHistories, error: reviewError } = useSWR<FetchedReviewListPerDocument[]>(keys, multipleFetcher);
+
   useEffect(() => {
-    // [TODO] fetch reviewer info
-    
-    // [TODO] set reviewer info to tableData
+    if(reviewHistories) {
+      // console.log("Review histories")
+      const tableDataWithReviews = tableData.map((data, idx) => {
+        const reviewData = reviewHistories[idx]
+        if(reviewData.data.length === 0) {
+          return data
+        }
+        
+        const lastReviewer = reviewData.data[reviewData.data.length-1]
+        return {
+          ...data,
+          reviewedAt: lastReviewer.createdAt,
+          reviewer: lastReviewer.reviewer
+        }
+      })
+      setTableData(tableDataWithReviews)
+    }
+  }, [reviewHistories])
 
-  }, [tableData])
-
-
-  const handleChangeReviewer = (documentId: string, reviewer: UserInfo) => {
-    console.log("Reviewer changed: ", reviewer)
+  
+  const handleChangeReviewer = (documentId: string, reviewer: UserInfo | null) => {
     // change reviewer info in tableData
     setTableData((tableData) => {
       return tableData.map((data) => {
         if(data.documentId === documentId) {
+          if (reviewer === null) {
+            return {
+              ...data,
+              newReviewer: null
+            }
+          }
           return {
             ...data,
             newReviewer: {
@@ -246,18 +273,33 @@ export default function SuperUserAllDocumnetTable() {
       }
     },
     {
-      id: "指定送審者",
+      id: "原審核者",
       accessorKey: "reviewer",
+      header: "原審核者",
+      cell: ({ row }) => {
+        if(row.original.reviewer === null) {
+          return (
+            <div>無</div>
+          )
+        }
+        return (
+          <div>{row.original.reviewer.name}</div>
+        )
+      }
+    },
+    {
+      id: "指定新審核者",
+      accessorKey: "newReviewer",
       header: ({ column }) => (
-        <div className="w-20">指定送審者</div>
+        <div className="w-20">指定新審核者</div>
       ),
       cell: ({ row }) => {
 
 
         return (
           <SuperUserAllDocumnetSelectUser 
-            reviewer={row.original.reviewer}
-            onReviewerChange={(reviewer: UserInfo) => handleChangeReviewer(row.original.documentId, reviewer)}
+            newReviewer={row.original.newReviewer}
+            onReviewerChange={(newReviewer: UserInfo | null) => handleChangeReviewer(row.original.documentId, newReviewer)}
           />
         )
       },
@@ -273,7 +315,9 @@ export default function SuperUserAllDocumnetTable() {
   ]
  
   const [columnVisibility, setColumnVisibility] =
-    useState<VisibilityState>({})
+    useState<VisibilityState>({
+      "文件編號": false,
+    })
   const [rowSelection, setRowSelection] = useState({})
 
   const handleDeleteDocuments = () => {
@@ -288,9 +332,6 @@ export default function SuperUserAllDocumnetTable() {
 
   const handleChangeReviewers = (requestsInfo: {documentId: string, reviewerId: string}[]) => {
     // [TODO] change reviewer
-    requestsInfo.forEach((request) => {
-      console.log("Change reviewer: ", request)
-    })
     // for end
     // [TODO] refetch data
     setRowSelection({})

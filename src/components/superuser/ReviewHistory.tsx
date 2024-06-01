@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -21,50 +21,74 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import { format } from 'date-fns';
+
+import useSWR from "swr"
+import { use } from "chai"
+
 
 type reviewHistoryDataType = {
   documentId: string,
   reviewId: string,
   reviewerName: string,
   status: string,
-  createAt: string,
+  createdAt: string,
+  updatedAt: string
 }
 
-async function fetchReviewHistoryData({documentId}: {documentId: string}) {
-  const response = await fetch(`/api/reviews/${documentId}`)
-  const data = await response.json()
-  return data
-}
+type FetchedReviewListPerDocument = PagedWrapper<ReviewInfoDTO>
+
+const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {documentId: string}) {
   const [historyData, setHistoryData] = useState<reviewHistoryDataType[]>([])
+
+  const [shouldFetch, setShouldFetch] = useState(false)
+
+  const enableFetch = () => {
+    setShouldFetch(true);
+  }
+
+  const { data: fetchReviewHistoryResponse, error } 
+      = useSWR<FetchedReviewListPerDocument>(shouldFetch ? `/api/reviews/${documentId}` : null, fetcher)
+
+  useEffect(() => {
+    if(fetchReviewHistoryResponse) {
+      setHistoryData(fetchReviewHistoryResponse.data.map((row) => {
+        return {
+          documentId: row.documentId,
+          reviewId: row.reviewer.id,
+          reviewerName: row.reviewer.name,
+          status: row.status,
+          createdAt: row.createdAt,
+          updatedAt: row.updatedAt
+        }
+      }))
+    }
+  }, [fetchReviewHistoryResponse]); // Only re-run the effect if data changes
   
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">審核紀錄</Button>
+        <Button variant="outline" onClick={enableFetch}>審核紀錄</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[650px]">
+      <DialogContent className="sm:max-w-[850px]">
         <DialogHeader>
-          <DialogTitle>Review History: {documentId}</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
+          <DialogTitle>歷史審核紀錄: {documentId}</DialogTitle>
         </DialogHeader>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>文件編號</TableHead>
               <TableHead>審核者編號</TableHead>
               <TableHead>審核者名稱</TableHead>
               <TableHead>審核狀態</TableHead>
-              <TableHead>時間點</TableHead>
+              <TableHead>送審時間點</TableHead>
+              <TableHead>更新時間點</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {historyData.map((row) => (
               <TableRow key={row.reviewId}>
-                <TableCell>{row.documentId}</TableCell>
                 <TableCell>{row.reviewId}</TableCell>
                 <TableCell>{row.reviewerName}</TableCell>
                 <TableCell>
@@ -88,7 +112,8 @@ export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {docu
                       )}
                     </>
                 </TableCell>
-                <TableCell>{row.createAt}</TableCell>
+                <TableCell>{format(new Date(row.createdAt), 'MM/dd/yyyy, hh:mm:ss a')}</TableCell>
+                <TableCell>{format(new Date(row.updatedAt), 'MM/dd/yyyy, hh:mm:ss a')}</TableCell>
               </TableRow>
             ))}
           </TableBody>
