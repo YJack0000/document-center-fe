@@ -38,7 +38,7 @@ jobs:
       uses: cypress-io/github-action@v6
       with:
         browser: chrome
-        wait-on: 'http://[::1]:3000'
+        wait-on: 'http://localhost:3000'
         
 
   
