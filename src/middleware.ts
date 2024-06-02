@@ -25,7 +25,6 @@ const getPrivilege = async (request: NextRequest): Promise<PrivilegeDTO> => {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   if (
-    pathname.startsWith("/login") || // exclude login page
     pathname.startsWith("/_next") || // exclude Next.js internals
     pathname.startsWith("/api") || //  exclude all API routes
     pathname.startsWith("/static") || // exclude static files
@@ -34,6 +33,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (pathname.startsWith("/login")) {
+    const cookie = request.headers.get("cookie");
+    if (cookie) {
+      // if the user is already logged in, redirect to the home page
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/`, {
+        status: RedirectStatusCode.TemporaryRedirect,
+      });
+    }
+    return NextResponse.next();
+  }
   if (request.nextUrl.pathname.startsWith("/superuser")) {
     const privilege = await getPrivilege(request);
     if (privilege.privilege !== "superuser") {
