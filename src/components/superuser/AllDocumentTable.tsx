@@ -343,7 +343,9 @@ export default function SuperUserAllDocumnetTable() {
     
     changeReviewerFetcher(requestsInfo).then(() => {
       console.log("Change reviewer success")
-      updateReviewListDoc()
+      requestsInfo.forEach(request => {
+        updateReviewListDoc()
+      })
       console.log("Mutate success")
     }).catch((error) => {
       console.log("Change reviewer error", error)
