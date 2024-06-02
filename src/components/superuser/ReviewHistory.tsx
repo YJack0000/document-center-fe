@@ -28,6 +28,7 @@ import { use } from "chai"
 
 
 type reviewHistoryDataType = {
+  id: string,
   documentId: string,
   reviewId: string,
   reviewerName: string,
@@ -56,6 +57,7 @@ export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {docu
     if(fetchReviewHistoryResponse) {
       setHistoryData(fetchReviewHistoryResponse.data.map((row) => {
         return {
+          id: row.id,
           documentId: row.documentId,
           reviewId: row.reviewer.id,
           reviewerName: row.reviewer.name,
@@ -88,29 +90,25 @@ export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {docu
           </TableHeader>
           <TableBody>
             {historyData.map((row) => (
-              <TableRow key={row.reviewId}>
+              <TableRow key={row.id}>
                 <TableCell>{row.reviewId}</TableCell>
                 <TableCell>{row.reviewerName}</TableCell>
                 <TableCell>
                   <>
-                      {row.status === "pass" ? (
-                        <span className="px-2 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">
-                          {row.status}
-                        </span>
-                      ) : row.status === "reject" ? (
-                        <span className="px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded-full">
-                          {row.status}
-                        </span>
-                      ) : row.status === "review" ? (
-                        <span className="px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full">
-                          {row.status}
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-full">
-                          {row.status}
-                        </span>
-                      )}
-                    </>
+                    {row.status === "pass" 
+                    ? (<span className="px-2 py-1 text-xs font-semibold text-green-600 bg-green-200 rounded-full"> 通過 </span>)
+                    : row.status === "reject"
+                    ? (<span className="px-2 py-1 text-xs font-semibold text-red-600 bg-red-200 rounded-full"> 拒絕 </span>)
+                    : row.status === "review"
+                    ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 審核中 </span>)
+                    : row.status === "wait"
+                    ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 等待中 </span>)
+                    : row.status === "transfer"
+                    ? (<span className="px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-200 rounded-full"> 轉交 </span>)
+                    : row.status === "edit"
+                    ? (<span className="px-2 py-1 text-xs font-semibold text-gray-600 bg-gray-200 rounded-full"> 編輯中 </span>)
+                    : (<span className="px-2 py-1 text-xs font-semibold text-purple-600 bg-purple-200 rounded-full"> {row.status} </span>)}
+                  </>
                 </TableCell>
                 <TableCell>{format(new Date(row.createdAt), 'MM/dd/yyyy, hh:mm:ss a')}</TableCell>
                 <TableCell>{format(new Date(row.updatedAt), 'MM/dd/yyyy, hh:mm:ss a')}</TableCell>
@@ -118,6 +116,7 @@ export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {docu
             ))}
           </TableBody>
         </Table>
+        {historyData.length === 0 && <DialogDescription className="text-center">尚無審核紀錄</DialogDescription>}
         <DialogFooter>
             <DialogClose asChild>
                 <Button variant="outline">Close</Button>

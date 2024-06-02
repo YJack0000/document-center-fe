@@ -85,7 +85,7 @@ export default function SuperUserAssignReviewerBtn( {
       <DialogTrigger asChild>
         <Button>審核</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>確認送審</DialogTitle>
           <DialogDescription>

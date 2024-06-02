@@ -47,7 +47,8 @@ import SuperUserDeleteDocumentButton from "./DeleteDocumentButton"
 import SuperUserAssignReviewerButton from "./AssignReviewerButton"
 import RowSortingBtn from "./RowSortingBtn"
 
-import useSWR from "swr"
+import useSWR, { useSWRConfig } from "swr"
+import { request } from "http"
 
 const PAGE_SIZE = 10
 
@@ -87,6 +88,8 @@ const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 export default function SuperUserAllDocumnetTable() {
 
+  const { mutate } = useSWRConfig()
+
   const [pageIdx, setPageIdx] = useState(1)
   const [lastPageIdx, setLastPageIdx] = useState(1)
   
@@ -114,7 +117,7 @@ export default function SuperUserAllDocumnetTable() {
   // Create a key for each item in tableData
   const keys = tableData.map((data) => `/api/reviews/${data.documentId}`)
   // Fetch the data for each key
-  const { data: reviewHistories, error: reviewError } = useSWR<FetchedReviewListPerDocument[]>(keys, multipleFetcher);
+  const { data: reviewHistories, error: reviewError, mutate: updateReviewListDoc } = useSWR<FetchedReviewListPerDocument[]>(keys, multipleFetcher);
 
   useEffect(() => {
     if(reviewHistories) {
@@ -217,12 +220,18 @@ export default function SuperUserAllDocumnetTable() {
         return (
           <>
             {status === "pass" 
-            ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-green-500 rounded-full"> {status} </span>)
+            ? (<span className="px-2 py-1 text-xs font-semibold text-green-600 bg-green-200 rounded-full"> 通過 </span>)
             : status === "reject"
-            ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded-full"> {status} </span>)
+            ? (<span className="px-2 py-1 text-xs font-semibold text-red-600 bg-red-200 rounded-full"> 拒絕 </span>)
             : status === "review"
-            ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full"> {status} </span>)
-            : (<span className="px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-full"> {status} </span>)}
+            ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 審核中 </span>)
+            : status === "wait"
+            ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 等待中 </span>)
+            : status === "transfer"
+            ? (<span className="px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-200 rounded-full"> 轉交 </span>)
+            : status === "edit"
+            ? (<span className="px-2 py-1 text-xs font-semibold text-gray-600 bg-gray-200 rounded-full"> 編輯中 </span>)
+            : (<span className="px-2 py-1 text-xs font-semibold text-purple-600 bg-purple-200 rounded-full"> {status} </span>)}
           </>
         )
       }
@@ -320,20 +329,32 @@ export default function SuperUserAllDocumnetTable() {
     })
   const [rowSelection, setRowSelection] = useState({})
 
-  const handleDeleteDocuments = () => {
-    console.log("delete document")
-    table.getSelectedRowModel().rows.forEach((row) => {
-      console.log("Remove document: ", row.original.documentId)
-      // [TODO] delete document
-    })
-    // [TODO] refetch data
-    setRowSelection({})
+
+  const changeReviewerFetcher = async (requestsInfo: {documentId: string, reviewerId: string}[]) => {
+    const responses = await Promise.all(requestsInfo.map(request => { 
+      fetch(`/api/reviews/${request.documentId}/assign`, { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          reviewerId: request.reviewerId
+        })
+      })
+    }))
+    return responses
   }
 
   const handleChangeReviewers = (requestsInfo: {documentId: string, reviewerId: string}[]) => {
-    // [TODO] change reviewer
-    // for end
-    // [TODO] refetch data
+    console.log("Change reviewer")
+    
+    changeReviewerFetcher(requestsInfo).then(() => {
+      console.log("Change reviewer success")
+      updateReviewListDoc()
+      console.log("Mutate success")
+    }).catch((error) => {
+      console.log("Change reviewer error", error)
+    })
     setRowSelection({})
   }
 
@@ -382,9 +403,22 @@ export default function SuperUserAllDocumnetTable() {
     }
   })
 
+  const deleteDocumentFetcher = async (documentId: string[]) => {
+    const responses = await Promise.all(documentId.map(id => fetch(`/api/documents/${id}`, {method: 'DELETE'})))
+    return responses
+  }
   
-  if(isLoading) {
-    return <div>Loading...</div>
+  const handleDeleteDocuments = () => {
+    console.log("delete document 123")
+    const selectedDocuments = table.getSelectedRowModel().rows.map(row => row.original.documentId);
+    deleteDocumentFetcher(selectedDocuments).then(() => {
+      console.log("Delete document success")
+      mutate(`/api/documents/all?page=${pageIdx}&limit=${PAGE_SIZE}`)
+    })
+    .catch((error) => {
+      console.log("Delete document error", error)
+    })
+    setRowSelection({})
   }
 
   if(error) {
