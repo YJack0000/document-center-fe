@@ -5,6 +5,7 @@ metadata:
   namespace: document-center
 spec:
   replicas: 1
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: document-center-fe
@@ -15,9 +16,12 @@ spec:
     spec:
       containers:
       - name: document-center-fe
-        image: yjack0000cs12/document-center-fe:v30
+        image: yjack0000cs12/document-center-fe:v29
         ports:
         - containerPort: 3000
+        envFrom:
+        - secretRef:
+            name: document-center-fe-secrets
         livenessProbe:
           httpGet:
             path: /
