@@ -21,16 +21,16 @@ import { CommandList } from "cmdk"
 import useSWR from "swr"
 
 type SuperuserAllDocumnetSelectUserProps = {
-  reviewer: UserInfo | null
-  onReviewerChange: (reviewer: UserInfo) => void
+  newReviewer: UserInfo | null
+  onReviewerChange: (newReviewer: UserInfo | null ) => void
 }
 
-type FetchedUserList = PagedWrapper<User>
+type FetchedUserList = PagedWrapper<UserDTO>
 
 const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 export default function SuperuserAllDocumnetSelectUser({
-  reviewer, onReviewerChange
+  newReviewer, onReviewerChange
 } : SuperuserAllDocumnetSelectUserProps
 ){
   const [open, setOpen] = useState(false)
@@ -59,7 +59,7 @@ export default function SuperuserAllDocumnetSelectUser({
           className="w-30 justify-between"
           onClick={enableFetch}
         >
-          {reviewer ? reviewer.name : "請選擇"}
+          {newReviewer ? newReviewer.name : "請選擇"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -74,14 +74,14 @@ export default function SuperuserAllDocumnetSelectUser({
                 key={user.id}
                 value={user.name}
                 onSelect={(name: string) => {
-                  onReviewerChange(user)
+                  onReviewerChange(user.name === newReviewer?.name ? null : user)
                   setOpen(false)
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    reviewer?.name === user.name ? "opacity-100" : "opacity-0"
+                    newReviewer?.name === user.name ? "opacity-100" : "opacity-0"
                   )}
                 />
                 {user.name}

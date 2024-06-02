@@ -42,11 +42,27 @@ export default function SuperUserAssignReviewerBtn( {
   onConfirmChangeReviewers,
 } : SuperUserAssignReviewerProps) {
   // if one of the selected document has no reviewer assigned, then the submit button should be disabled
-  const canSubmit = useMemo(() => {
+  const canSubmitCheckEmpty = useMemo(() => {
     if (reviewRequestList.length === 0) {
       return false
     }
     return reviewRequestList.every((row) => row.assignedReviewer !== null)
+  }, [reviewRequestList])
+
+  // if one of the selected document is in edit status, then the submit button should be disabled
+  const canSubmitCheckStatus = useMemo(() => {  
+    if (reviewRequestList.length === 0) {
+      return false
+    }
+    return reviewRequestList.every((row) => row.status !== "edit")
+  }, [reviewRequestList])
+
+  // if one of the assigned Reviewer is the owner of the document, then the submit button should be disabled 
+  const canSubmitCheckOwner = useMemo(() => { 
+    if (reviewRequestList.length === 0) {
+      return false
+    }
+    return reviewRequestList.every((row) => row.owner.id !== row.assignedReviewer?.id)
   }, [reviewRequestList])
 
   const handleClickSubmit = () => {
@@ -69,10 +85,9 @@ export default function SuperUserAssignReviewerBtn( {
       <DialogTrigger asChild>
         <Button>審核</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>確認送審</DialogTitle>
-          <h1>{canSubmit}</h1>
           <DialogDescription>
             請確認以下文件是否需要重新送審
           </DialogDescription>
@@ -100,15 +115,23 @@ export default function SuperUserAssignReviewerBtn( {
           </TableBody>
         </Table>
         <DialogFooter>
-          <DialogClose asChild>
-            {canSubmit ? (
+          <DialogClose asChild className="flex items-center">
+            {canSubmitCheckEmpty && canSubmitCheckStatus && canSubmitCheckOwner ? (
               <Button type="submit" variant="outline" onClick={handleClickSubmit} >
                 確定
               </Button>
-            ) : (
-              <Button type="submit" variant="outline" disabled>
+            ) : canSubmitCheckEmpty === false ? (
+              <div className="text-red-500">
                 有文件尚未指派審核者或是無文件被選取
-              </Button>
+              </div>
+            ) : canSubmitCheckStatus === false ? (
+              <div className="text-red-500">
+                有文件編輯中
+              </div>
+            ) : (
+              <div className="text-red-500">
+                存在文件的審核者為其文件擁有者
+              </div>
             )}
           </DialogClose>
           <DialogClose asChild>

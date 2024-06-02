@@ -4,8 +4,6 @@ import * as React from "react"
 import { useEffect, useState } from "react"
 import {
   ColumnDef,
-  ColumnFiltersState,
-  SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -15,11 +13,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { 
-  ArrowUpDown,
   ChevronDown,
-  Rewind,
-  User, 
-  // MoreHorizontal 
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -28,9 +22,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  // DropdownMenuItem,
-  // DropdownMenuLabel,
-  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -45,18 +36,17 @@ import {
 
 import SuperUserAllDocumnetSelectUser from "./SelectAssignReviewer"
 import SuperUserAllDocumnetShowReviewDialog from "./ReviewHistory"
-import { format, min, set } from 'date-fns';
+import { format } from 'date-fns';
 import SuperUserDeleteDocumentButton from "./DeleteDocumentButton"
 import SuperUserAssignReviewerButton from "./AssignReviewerButton"
 import RowSortingBtn from "./RowSortingBtn"
-import { Source_Serif_4 } from "next/font/google"
 
-import useSWR from "swr"
-import { use } from "chai"
+import useSWR, { useSWRConfig } from "swr"
 
 const PAGE_SIZE = 10
 
 type FetchedAllDocumentList = PagedWrapper<DocumentDTO>
+type FetchedReviewListPerDocument = PagedWrapper<ReviewInfoDTO>
 
 type SuperuserAllDocumnetTableRow = {
   documentId: string,
@@ -91,6 +81,8 @@ const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 export default function SuperUserAllDocumnetTable() {
 
+  const { mutate } = useSWRConfig()
+
   const [pageIdx, setPageIdx] = useState(1)
   const [lastPageIdx, setLastPageIdx] = useState(1)
   
@@ -101,26 +93,57 @@ export default function SuperUserAllDocumnetTable() {
 
   useEffect(() => {
     if(data) {
-      console.log("Data fetched: ", data)
       setTableData(data.data.map((document: DocumentDTO) => convertToSuperuserTableRow(document)))
       setLastPageIdx(data.totalPage)
     }
   }, [data])
 
+  
+  const multipleFetcher = async (urls: string | string[]) => {
+    if(Array.isArray(urls)) {
+      const responses = await Promise.all(urls.map(url => fetch(url).then(r => r.json())))
+      return await responses
+    }
+    const response = await fetch(urls).then(r => r.json())
+    return await response
+  }
+  // Create a key for each item in tableData
+  const keys = tableData.map((data) => `/api/reviews/${data.documentId}`)
+  // Fetch the data for each key
+  const { data: reviewHistories, error: reviewError, mutate: updateReviewListDoc } = useSWR<FetchedReviewListPerDocument[]>(keys, multipleFetcher);
+
   useEffect(() => {
-    // [TODO] fetch reviewer info
-    
-    // [TODO] set reviewer info to tableData
+    if(reviewHistories) {
+      // console.log("Review histories")
+      const tableDataWithReviews = tableData.map((data, idx) => {
+        const reviewData = reviewHistories[idx]
+        if(reviewData.data.length === 0) {
+          return data
+        }
+        
+        const lastReviewer = reviewData.data[0] // order is by desc
+        return {
+          ...data,
+          reviewedAt: lastReviewer.createdAt,
+          reviewer: lastReviewer.reviewer
+        }
+      })
+      setTableData(tableDataWithReviews)
+    }
+  }, [reviewHistories])
 
-  }, [tableData])
-
-
-  const handleChangeReviewer = (documentId: string, reviewer: UserInfo) => {
-    console.log("Reviewer changed: ", reviewer)
+  
+  const handleChangeReviewer = (documentId: string, reviewer: UserInfo | null) => {
     // change reviewer info in tableData
     setTableData((tableData) => {
       return tableData.map((data) => {
         if(data.documentId === documentId) {
+          if (reviewer === null) {
+            return {
+              ...data,
+              newReviewer: null
+            }
+          }
           return {
             ...data,
             newReviewer: {
@@ -190,12 +213,18 @@ export default function SuperUserAllDocumnetTable() {
         return (
           <>
             {status === "pass" 
-            ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-green-500 rounded-full"> {status} </span>)
+            ? (<span className="px-2 py-1 text-xs font-semibold text-green-600 bg-green-200 rounded-full"> 通過 </span>)
             : status === "reject"
-            ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded-full"> {status} </span>)
+            ? (<span className="px-2 py-1 text-xs font-semibold text-red-600 bg-red-200 rounded-full"> 拒絕 </span>)
             : status === "review"
-            ? (<span className="px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full"> {status} </span>)
-            : (<span className="px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-full"> {status} </span>)}
+            ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 審核中 </span>)
+            : status === "wait"
+            ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 等待中 </span>)
+            : status === "transfer"
+            ? (<span className="px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-200 rounded-full"> 轉交 </span>)
+            : status === "edit"
+            ? (<span className="px-2 py-1 text-xs font-semibold text-gray-600 bg-gray-200 rounded-full"> 編輯中 </span>)
+            : (<span className="px-2 py-1 text-xs font-semibold text-purple-600 bg-purple-200 rounded-full"> {status} </span>)}
           </>
         )
       }
@@ -246,18 +275,33 @@ export default function SuperUserAllDocumnetTable() {
       }
     },
     {
-      id: "指定送審者",
+      id: "原審核者",
       accessorKey: "reviewer",
+      header: "原審核者",
+      cell: ({ row }) => {
+        if(row.original.reviewer === null) {
+          return (
+            <div>無</div>
+          )
+        }
+        return (
+          <div>{row.original.reviewer.name}</div>
+        )
+      }
+    },
+    {
+      id: "指定新審核者",
+      accessorKey: "newReviewer",
       header: ({ column }) => (
-        <div className="w-20">指定送審者</div>
+        <div className="w-20">指定新審核者</div>
       ),
       cell: ({ row }) => {
 
 
         return (
           <SuperUserAllDocumnetSelectUser 
-            reviewer={row.original.reviewer}
-            onReviewerChange={(reviewer: UserInfo) => handleChangeReviewer(row.original.documentId, reviewer)}
+            newReviewer={row.original.newReviewer}
+            onReviewerChange={(newReviewer: UserInfo | null) => handleChangeReviewer(row.original.documentId, newReviewer)}
           />
         )
       },
@@ -273,26 +317,39 @@ export default function SuperUserAllDocumnetTable() {
   ]
  
   const [columnVisibility, setColumnVisibility] =
-    useState<VisibilityState>({})
+    useState<VisibilityState>({
+      "文件編號": false,
+    })
   const [rowSelection, setRowSelection] = useState({})
 
-  const handleDeleteDocuments = () => {
-    console.log("delete document")
-    table.getSelectedRowModel().rows.forEach((row) => {
-      console.log("Remove document: ", row.original.documentId)
-      // [TODO] delete document
-    })
-    // [TODO] refetch data
-    setRowSelection({})
+
+  const changeReviewerFetcher = async (requestsInfo: {documentId: string, reviewerId: string}[]) => {
+    const responses = await Promise.all(requestsInfo.map(request => { 
+      fetch(`/api/reviews/${request.documentId}/assign`, { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          reviewerId: request.reviewerId
+        })
+      })
+    }))
+    return responses
   }
 
   const handleChangeReviewers = (requestsInfo: {documentId: string, reviewerId: string}[]) => {
-    // [TODO] change reviewer
-    requestsInfo.forEach((request) => {
-      console.log("Change reviewer: ", request)
+    console.log("Change reviewer")
+    
+    changeReviewerFetcher(requestsInfo).then(() => {
+      console.log("Change reviewer success")
+      requestsInfo.forEach(request => {
+        updateReviewListDoc()
+      })
+      console.log("Mutate success")
+    }).catch((error) => {
+      console.log("Change reviewer error", error)
     })
-    // for end
-    // [TODO] refetch data
     setRowSelection({})
   }
 
@@ -341,9 +398,22 @@ export default function SuperUserAllDocumnetTable() {
     }
   })
 
+  const deleteDocumentFetcher = async (documentId: string[]) => {
+    const responses = await Promise.all(documentId.map(id => fetch(`/api/documents/${id}`, {method: 'DELETE'})))
+    return responses
+  }
   
-  if(isLoading) {
-    return <div>Loading...</div>
+  const handleDeleteDocuments = () => {
+    console.log("delete document 123")
+    const selectedDocuments = table.getSelectedRowModel().rows.map(row => row.original.documentId);
+    deleteDocumentFetcher(selectedDocuments).then(() => {
+      console.log("Delete document success")
+      mutate(`/api/documents/all?page=${pageIdx}&limit=${PAGE_SIZE}`)
+    })
+    .catch((error) => {
+      console.log("Delete document error", error)
+    })
+    setRowSelection({})
   }
 
   if(error) {

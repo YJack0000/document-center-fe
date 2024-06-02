@@ -5,3 +5,11 @@ type User = {
     "isManager": boolean,
     "createAt": string,
 }
+
+type UserDTO = {
+    "id": string,
+    "email": string,
+    "name": string,
+    "isSuperuser": boolean,
+    "createAt": string,
+}
