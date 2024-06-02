@@ -2,10 +2,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
-import { useEffect, useState } from "react";
-import UserContext from "@/context/userContext";
-import { useRouter } from "next/navigation";
-import { verifyJwt } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -13,37 +10,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    if (!user) {
-      // from cookie read access token
-      // if access token is valid, set user
-      // else redirect to login
-      let findUser = false;
-      document.cookie.split(";").forEach((cookie) => {
-        const [key, value] = cookie.split("=");
-        if (key === "access_token") {
-          const user = verifyJwt(value);
-          if (user) {
-            findUser = true;
-            setUser(verifyJwt(value));
-          }
-        }
-      });
-      if (!findUser) {
-        router.push("/login");
-      }
-    }
-  }, [user]);
+  const pathname = usePathname();
+  // if path is /login, return the login layout
+  if (pathname === "/login") {
+    return (
+      <html lang="en">
+        <body className={inter.className}>
+          <div className="flex"> {children}</div>
+        </body>
+      </html>
+    );
+  }
   return (
     <html lang="en">
       <body className={inter.className}>
         <div className="flex">
-          <UserContext.Provider value={user}>
-            {user && <Sidebar className="w-60 h-screen border" />}
-          </UserContext.Provider>
+          <Sidebar className="w-60 h-screen border" />
           {children}
         </div>
       </body>
