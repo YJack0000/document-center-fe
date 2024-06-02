@@ -128,7 +128,7 @@ export default function SuperUserAllDocumnetTable() {
           return data
         }
         
-        const lastReviewer = reviewData.data[reviewData.data.length-1]
+        const lastReviewer = reviewData.data[0] // order is by desc
         return {
           ...data,
           reviewedAt: lastReviewer.createdAt,
