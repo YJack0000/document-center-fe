@@ -2,7 +2,7 @@
 import useDocument from "@/hooks/useDocument";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,11 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
   const { document, error, isLoading } = useDocument(documentId);
   const [title, setTitle] = useState(document?.title);
   const [content, setContent] = useState(document?.content);
+
+  useEffect(() => {
+    setTitle(document?.title);
+    setContent(document?.content);
+  }, [document]);
 
   const handleSave = async () => {
     await fetch(`/api/documents/${documentId}`, {
