@@ -35,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useRouter } from "next/navigation";
 
 export const columns: ColumnDef<DocumentDTO>[] = [
   {
@@ -76,36 +77,33 @@ export const columns: ColumnDef<DocumentDTO>[] = [
       </div>
     ),
   },
-
-  //   {
-  //     id: "actions",
-  //     enableHiding: false,
-  //     cell: ({ row }) => {
-  //       const payment = row.original;
-
-  //       return (
-  //         <DropdownMenu>
-  //           <DropdownMenuTrigger asChild>
-  //             <Button variant="ghost" className="h-8 w-8 p-0">
-  //               <span className="sr-only">Open menu</span>
-  //               <MoreHorizontal className="h-4 w-4" />
-  //             </Button>
-  //           </DropdownMenuTrigger>
-  //           <DropdownMenuContent align="end">
-  //             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //             <DropdownMenuItem
-  //               onClick={() => navigator.clipboard.writeText(payment.id)}
-  //             >
-  //               Copy payment ID
-  //             </DropdownMenuItem>
-  //             <DropdownMenuSeparator />
-  //             <DropdownMenuItem>View customer</DropdownMenuItem>
-  //             <DropdownMenuItem>View payment details</DropdownMenuItem>
-  //           </DropdownMenuContent>
-  //         </DropdownMenu>
-  //       );
-  //     },
-  //   },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const document = row.original;
+      const router = useRouter();
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => router.push(`/documents/${document.id}/edit`)}
+            >
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
 ];
 
 export function DataTable({ data }: { data: DocumentDTO[] }) {
