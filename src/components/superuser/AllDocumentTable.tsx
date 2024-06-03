@@ -53,6 +53,10 @@ import SuperUserAssignReviewerButton from "./AssignReviewerButton"
 import RowSortingBtn from "./RowSortingBtn"
 
 import useSWR, { useSWRConfig } from "swr"
+import { StatusBadge } from "./StatusBadge"
+import { use } from "chai"
+import { useToast } from "../ui/use-toast"
+import { Toaster } from "../ui/toaster"
 
 const PAGE_SIZE = 2
 
@@ -69,6 +73,7 @@ type SuperuserAllDocumnetTableRow = {
   owner: UserInfo
   reviewer: UserInfo | null,
   newReviewer: UserInfo | null
+  reviewStatus: string | null
 }
 
 function convertToSuperuserTableRow(data: DocumentDTO): SuperuserAllDocumnetTableRow {
@@ -84,11 +89,17 @@ function convertToSuperuserTableRow(data: DocumentDTO): SuperuserAllDocumnetTabl
     editedAt: data.updateAt,
     reviewedAt: null,
     reviewer: null,
-    newReviewer: null
+    newReviewer: null,
+    reviewStatus: null
   }
 }
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
+const fetcher = (url: string) => fetch(url).then((r) => {
+  if(!r.ok) {
+    throw new Error("取得資料時發生錯誤，請連繫後台管理人員。")
+  }
+  return r.json()
+})
 
 export default function SuperUserAllDocumnetTable() {
 
@@ -136,7 +147,8 @@ export default function SuperUserAllDocumnetTable() {
         return {
           ...data,
           reviewedAt: lastReviewer.createdAt,
-          reviewer: lastReviewer.reviewer
+          reviewer: lastReviewer.reviewer,
+          reviewStatus: lastReviewer.status
         }
       })
       setTableData(tableDataWithReviews)
@@ -211,7 +223,7 @@ export default function SuperUserAllDocumnetTable() {
       header: "標題",
       cell: ({ row }) => {
         return (
-          <div className="min-w-[10rem]">{row.original.title}</div>
+          <div className="w-[10rem]">{row.original.title}</div>
         )
       }
     },
@@ -220,23 +232,14 @@ export default function SuperUserAllDocumnetTable() {
       accessorKey: "status",
       header: "狀態",
       cell: ({ row }) => {
-        const status = row.original.status.toLowerCase()
+        if(row.original.reviewStatus === null) {
+          return (
+            <StatusBadge status={row.original.status} />
+          )
+        }
+        const status = row.original.reviewStatus.toLowerCase()
         return (
-          <>
-            {status === "pass"
-              ? (<span className="px-2 py-1 text-xs font-semibold text-green-600 bg-green-200 rounded-full"> 通過 </span>)
-              : status === "reject"
-                ? (<span className="px-2 py-1 text-xs font-semibold text-red-600 bg-red-200 rounded-full"> 拒絕 </span>)
-                : status === "review"
-                  ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 審核中 </span>)
-                  : status === "wait"
-                    ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 等待中 </span>)
-                    : status === "transfer"
-                      ? (<span className="px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-200 rounded-full"> 轉交 </span>)
-                      : status === "edit"
-                        ? (<span className="px-2 py-1 text-xs font-semibold text-gray-600 bg-gray-200 rounded-full"> 編輯中 </span>)
-                        : (<span className="px-2 py-1 text-xs font-semibold text-purple-600 bg-purple-200 rounded-full"> {status} </span>)}
-          </>
+          <StatusBadge status={status} />
         )
       }
     },
@@ -250,7 +253,9 @@ export default function SuperUserAllDocumnetTable() {
       },
       cell: ({ row }) => {
         return (
-          <div className="text-center">{row.original.owner.name}</div>
+          <div className="flex w-full justify-center">
+          <div className="max-w-16">{row.original.owner.name}</div>
+          </div>
         )
       }
     },
@@ -427,12 +432,15 @@ export default function SuperUserAllDocumnetTable() {
     setRowSelection({})
   }
 
-  if (error) {
-    throw new Error('An error occurred while fetching all documents.')
-  }
+  const { toast } = useToast()
+  useEffect(() => {
+    if (error) {
+      toast({ title: "發生錯誤", description: error.message, variant: "destructive" })
+    }
+  }, [error])
 
   return (
-    <div className="w-full min-w-[70vw]">
+    <div className="w-full min-w-[1000px]">
       <div className="flex items-center py-4">
         <Input
           id="filter-owner"
@@ -526,38 +534,11 @@ export default function SuperUserAllDocumnetTable() {
       </div>
 
       <div className="flex items-center justify-center space-x-2 py-4">
-        {/* <div className="space-x-2">
-          <Button onClick={() => setPageIdx(1)}>第一頁</Button>
-          {
-            pageIdx-1 > 0 ?
-              <Button onClick={() => setPageIdx(pageIdx-1)}>{pageIdx-1}</Button>
-              : null
-          }
-          {
-            Array.from({length: Math.min(4, lastPageIdx-pageIdx+1)}, (_, i) => i + pageIdx).map((page) => (
-              <Button key={page} 
-                      onClick={() => setPageIdx(page)}
-                      className={page === pageIdx ? "bg-blue-500 text-white" : ""}
-              >
-                {page}
-              </Button>
-            ))
-          }
-          {
-            pageIdx+4 < lastPageIdx ?
-              <Button onClick={() => setPageIdx(pageIdx+4)}>{pageIdx+4}</Button>
-              : null
-          }
-          <Button onClick={() => setPageIdx(lastPageIdx)}>最後一頁</Button>
-        </div> */}
         <Pagination>
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious onClick={() => setPageIdx(() => pageIdx > 1 ? pageIdx - 1 : pageIdx)} />
             </PaginationItem>
-            {/* <PaginationItem>
-              <PaginationLink isActive >{pageIdx}</PaginationLink>
-            </PaginationItem> */}
             {
               Array.from({ length: Math.min(5, lastPageIdx) }, (_, i) => i + 1).map((page) => (
                 <PaginationItem key={page}>
@@ -570,15 +551,11 @@ export default function SuperUserAllDocumnetTable() {
                 </PaginationItem>
               ))
             }
-            {/* <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem> */}
             <PaginationItem>
               <PaginationNext onClick={() => setPageIdx(() => pageIdx + 1 <= lastPageIdx ? pageIdx + 1 : pageIdx)} />
             </PaginationItem>
           </PaginationContent>
         </Pagination>
-
       </div>
     </div>
   )
