@@ -1,7 +1,6 @@
 "use client"
 
 import MarkdownPreview from '@uiw/react-markdown-preview';
-import ReactMarkdownProps from 'react-markdown';
 import remarkGfm from 'remark-gfm'
 import './index.css';
 import CommentBlock from './commentBlock';

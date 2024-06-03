@@ -78,6 +78,7 @@ export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {docu
         <DialogHeader>
           <DialogTitle>歷史審核紀錄: {documentId}</DialogTitle>
         </DialogHeader>
+        <div className="max-h-[500px] overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -116,6 +117,7 @@ export default function SuperUserAllDocumnetShowReviewDialog({documentId}: {docu
             ))}
           </TableBody>
         </Table>
+        </div>
         {historyData.length === 0 && <DialogDescription className="text-center">尚無審核紀錄</DialogDescription>}
         <DialogFooter>
             <DialogClose asChild>

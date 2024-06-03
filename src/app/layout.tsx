@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
 import { usePathname } from "next/navigation";
+import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -28,6 +29,7 @@ export default function RootLayout({
           <Sidebar className="w-60 h-screen border" />
           {children}
         </div>
+        <Toaster />
       </body>
     </html>
   );
