@@ -50,7 +50,8 @@ export default function SuperUserDeleteDocument({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>刪除</Button>
+        <Button  variant="destructive"
+        >刪除</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[700px]">
         <DialogHeader>

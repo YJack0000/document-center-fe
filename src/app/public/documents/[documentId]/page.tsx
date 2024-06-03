@@ -1,6 +1,6 @@
 "use client";
 
-import DocumentRender from "@/components/documents/document-render";
+import DocumentRender from "@/components/documents/documentRender";
 
 export default function Page({params} : {params: {documentId: string}}) {
   return (
