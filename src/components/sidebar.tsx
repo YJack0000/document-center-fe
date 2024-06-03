@@ -18,14 +18,14 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
         </h1>
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            文件列表
+            公開文件
           </h2>
           <div className="space-y-1">
             <Button
               variant="secondary"
               className="w-full justify-start"
               onClick={() => {
-                router.push("/documents/public");
+                router.push("/public/documents");
               }}
             >
               <svg
