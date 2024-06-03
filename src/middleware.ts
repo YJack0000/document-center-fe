@@ -54,7 +54,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // check if the user is logged in
-  if (pathname.startsWith("/")) {
+  if (pathname.startsWith("/documents")) {
     const cookie = request.headers.get("cookie");
     if (!cookie) {
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login`, {
