@@ -36,20 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export type Document = {
-  id: string;
-  title: string;
-  content: string;
-  status: "edit";
-  updateAt: string;
-  createAt: string;
-  owner: {
-    id: string;
-    name: string;
-  };
-};
-
-export const columns: ColumnDef<Document>[] = [
+export const columns: ColumnDef<DocumentDTO>[] = [
   {
     accessorKey: "title",
     header: "標題",
@@ -121,21 +108,7 @@ export const columns: ColumnDef<Document>[] = [
   //   },
 ];
 
-export function DataTableDemo() {
-  const data: Document[] = [
-    {
-      id: "e24f8536-3ed7-4893-8ca3-eca37280bbb9",
-      title: "tetst",
-      content: " ",
-      status: "edit",
-      updateAt: "2024-05-29T15:40:10.651Z",
-      createAt: "2024-05-29T15:40:10.651Z",
-      owner: {
-        id: "59926496",
-        name: "CTHua",
-      },
-    },
-  ];
+export function DataTable({ data }: { data: DocumentDTO[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -166,14 +139,14 @@ export function DataTableDemo() {
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input
+        {/* <Input
           placeholder="Filter emails..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
-        />
+        /> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
