@@ -26,6 +26,7 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
               className="w-full justify-start"
               onClick={() => {
                 router.push("/");
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
