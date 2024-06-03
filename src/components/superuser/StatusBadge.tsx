@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 
 export function StatusBadge({ status }: { status: "pass" | "reject" | "review" | "wait" | "transfer" | "edit" | string }) {
-    console.log("status", status)
     return (<>
         {status === "pass"
           ? (<Badge className="justify-center min-w-16 text-sx font-semibold text-green-600 bg-green-200 pointer-events-none"> 通過 </Badge>)

@@ -358,11 +358,11 @@ export default function SuperUserAllDocumnetTable() {
     console.log("Change reviewer")
 
     changeReviewerFetcher(requestsInfo).then(() => {
-      console.log("Change reviewer success")
+      // console.log("Change reviewer success")
       requestsInfo.forEach(request => {
         updateReviewListDoc()
       })
-      console.log("Mutate success")
+      // console.log("Mutate success")
     }).catch((error) => {
       console.log("Change reviewer error", error)
     })
@@ -420,10 +420,8 @@ export default function SuperUserAllDocumnetTable() {
   }
 
   const handleDeleteDocuments = () => {
-    console.log("delete document 123")
     const selectedDocuments = table.getSelectedRowModel().rows.map(row => row.original.documentId);
     deleteDocumentFetcher(selectedDocuments).then(() => {
-      console.log("Delete document success")
       mutate(`/api/documents/all?page=${pageIdx}&limit=${PAGE_SIZE}`)
     })
       .catch((error) => {
