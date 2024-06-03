@@ -10,8 +10,8 @@ import { useRouter } from "next/navigation";
 const DocumentEditor = ({ documentId }: { documentId: string }) => {
   const router = useRouter();
   const { document, error, isLoading } = useDocument(documentId);
-  const [title, setTitle] = useState(document.title);
-  const [content, setContent] = useState(document.content);
+  const [title, setTitle] = useState(document?.title);
+  const [content, setContent] = useState(document?.content);
 
   const handleSave = async () => {
     await fetch(`/api/documents/${documentId}`, {
