@@ -25,7 +25,7 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
               variant="secondary"
               className="w-full justify-start"
               onClick={() => {
-                router.push("/public/documents");
+                router.push("/");
               }}
             >
               <svg
@@ -115,22 +115,6 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
                 <path d="M12 12H3" />
                 <path d="M16 6H3" />
                 <path d="M12 18H3" />
-              </svg>
-              所有文件
-            </Button>
-            <Button variant="ghost" className="w-full justify-start">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2 h-4 w-4"
-              >
-                <circle cx="8" cy="18" r="4" />
-                <path d="M12 18V2l7 4" />
               </svg>
               所有文件
             </Button>

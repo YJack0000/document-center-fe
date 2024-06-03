@@ -36,8 +36,9 @@ const DocumentTableWithPagination = ({
       return response.json();
     }
   );
-  if (isLoading) return <div>Loading...</div>;
 
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Failed to fetch data</div>;
   return (
     <div className="flex items-center justify-between flex-col gap-2">
       <DataTable data={data.data} />
