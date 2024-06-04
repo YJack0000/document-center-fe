@@ -37,7 +37,6 @@ import {
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -54,11 +53,10 @@ import RowSortingBtn from "./RowSortingBtn"
 
 import useSWR, { useSWRConfig } from "swr"
 import { StatusBadge } from "./StatusBadge"
-import { use } from "chai"
 import { useToast } from "../ui/use-toast"
-import { Toaster } from "../ui/toaster"
 import PreviewDocument from "./PreviewDocument"
 import DocumentDate from "./DocumentDate"
+import useDebounce from "@/lib/debounce"
 
 const PAGE_SIZE = 10
 
@@ -112,8 +110,13 @@ export default function SuperUserAllDocumnetTable() {
   const [pageIdx, setPageIdx] = useState(1)
   const [lastPageIdx, setLastPageIdx] = useState(1)
 
-  const { data, isLoading, error, isValidating }
-    = useSWR<FetchedAllDocumentList>(`/api/documents/all?page=${pageIdx}&limit=${PAGE_SIZE}`,
+
+    const [search, setSearch] = useState("")
+    const debouncedSearch = useDebounce<string>(search, 500);
+
+
+  const { data, error }
+    = useSWR<FetchedAllDocumentList>(`/api/documents/all?page=${pageIdx}&limit=${PAGE_SIZE}&search=${debouncedSearch}`,
       fetcher)
   const [tableData, setTableData] = useState<SuperuserAllDocumnetTableRow[]>([])
 
@@ -369,7 +372,7 @@ export default function SuperUserAllDocumnetTable() {
   const handleChangeReviewers = (requestsInfo: { documentId: string, reviewerId: string}[]) => {
     console.log("Change reviewer")
 
-    changeReviewerFetcher(requestsInfo).then((newData) => {
+    changeReviewerFetcher(requestsInfo).then((ata) => {
       setTimeout(() => {  // block 2 sec before refetch
         mutate(keys)
       }, 2000)
@@ -450,15 +453,7 @@ export default function SuperUserAllDocumnetTable() {
   return (
     <div className="w-full min-w-[1000px]">
       <div className="flex items-center py-4">
-        <Input
-          id="filter-owner"
-          placeholder="過濾所有者..."
-          value={(table.getColumn("所有者")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("所有者")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <Input type="text" placeholder="搜尋" value={search} onChange={(e) => setSearch(e.target.value)} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
