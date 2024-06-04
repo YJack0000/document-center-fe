@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Pencil } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -87,23 +87,12 @@ export const columns: ColumnDef<DocumentDTO>[] = [
       const document = row.original;
       const router = useRouter();
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>動作</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => router.push(`/documents/${document.id}/edit`)}
-            >
-              編輯
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+          onClick={() => router.push(`/documents/${document.id}/edit`)}
+          disabled={document.status !== "edit"}
+        >
+          <Pencil className="mr-2 h-4 w-4" /> 編輯
+        </Button>
       );
     },
   },
