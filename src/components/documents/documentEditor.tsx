@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import "../index.css";
 
 const DocumentEditor = ({ documentId }: { documentId: string }) => {
   const router = useRouter();
@@ -50,6 +51,7 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="id">內文</Label>
         <MDEditor
+          className="markdown-list"
           value={content}
           onChange={(value) => setContent(value as string)}
         />

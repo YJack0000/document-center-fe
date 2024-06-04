@@ -2,7 +2,7 @@
 
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import remarkGfm from 'remark-gfm'
-import './index.css';
+import '../index.css';
 import CommentBlock from './commentBlock';
 import useSWR from 'swr';
 
