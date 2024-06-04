@@ -114,6 +114,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
+                                // [TODO]: Add delete handler to the AlertDialogAction component
                                 <AlertDialogAction className="bg-destructive" onClick={() => { }}>
                                     繼續</AlertDialogAction>
                                 <AlertDialogCancel>取消</AlertDialogCancel>
@@ -199,7 +200,7 @@ export function DataTable({ data }: { data: DocumentDTO[] }) {
                                     colSpan={columns.length}
                                     className="h-24 text-center"
                                 >
-                                    No results.
+                                    暫時沒有文件
                                 </TableCell>
                             </TableRow>
                         )}
