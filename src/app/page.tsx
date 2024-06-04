@@ -1,5 +1,5 @@
 "use client";
-import DocumentTableWithPagination from "@/components/documents/documentTableWithPagination";
+import PublicDocumentTableWithPagination from "@/components/documents/public/publicDocumentTableWithPagination";
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
       <div className="flex flex-col h-screen p-10 w-full">
         <h1 className="text-4xl font-bold">公開文件</h1>
         <hr className="my-6 w-full" />
-        <DocumentTableWithPagination type="public_all" />
+        <PublicDocumentTableWithPagination />
       </div>
     </main>
   );
