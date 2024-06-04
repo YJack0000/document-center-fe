@@ -58,6 +58,7 @@ import { use } from "chai"
 import { useToast } from "../ui/use-toast"
 import { Toaster } from "../ui/toaster"
 import PreviewDocument from "./PreviewDocument"
+import DocumentDate from "./DocumentDate"
 
 const PAGE_SIZE = 10
 
@@ -265,35 +266,38 @@ export default function SuperUserAllDocumnetTable() {
         )
       }
     },
-    {
-      id: '建立-修改-日期',
-      header: ({ column }) => {
-        return (
-          <div>建立日期 / 修改日期</div>
-        )
-      },
-      cell: ({ row }) => {
-        const { createdAt, editedAt } = row.original
-        const [createDate, editDate] = [createdAt, editedAt].map(date => format(new Date(date), 'MM/dd/yyyy'))
-        return (
-          <div> {createDate} / {editDate}</div>
-        )
-      }
-    },
+    // {
+    //   id: '建立-修改-日期',
+    //   header: ({ column }) => {
+    //     return (
+    //       <div>建立日期 / 修改日期</div>
+    //     )
+    //   },
+    //   cell: ({ row }) => {
+    //     const { createdAt, editedAt } = row.original
+    //     const [createDate, editDate] = [createdAt, editedAt].map(date => format(new Date(date), 'MM/dd/yyyy'))
+    //     return (
+    //       <div> {createDate} / {editDate}</div>
+    //     )
+    //   }
+    // },
     {
       id: "近期審核日期",
       accessorKey: "reviewAt",
       header: "近期審核日期",
       cell: ({ row }) => {
-        if (row.original.reviewedAt === null) {
-          return (
-            <div>無</div>
-          )
-        }
-
-        return (
-          <div>{format(new Date(row.original.reviewedAt), 'MM/dd/yyyy')}</div>
-        )
+        // if (row.original.reviewedAt === null) {
+        //   return (
+        //     <div>無</div>
+        //   )
+        // }
+        // return (
+          
+        // )
+        const { createdAt, editedAt, reviewedAt } = row.original
+        const [createDateFormatted, editDateFormatted, reviewDateFormatted] 
+          = [createdAt, editedAt, reviewedAt].map(date => date ? format(new Date(date), 'MM/dd/yyyy, hh:mm') : "無")
+        return (<DocumentDate createdAt={createDateFormatted} editedAt={editDateFormatted} reviewAt={reviewDateFormatted}/>)
       }
     },
     {
