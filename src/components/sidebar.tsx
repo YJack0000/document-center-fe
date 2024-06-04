@@ -36,18 +36,6 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
               公開文件
             </Button>
           </div>
-          <div className="space-y-1">
-            <Button
-              variant={currentPath === "/public/me" ? "secondary" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => {
-                router.push("/public/me")
-              }}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              我的公開文件
-            </Button>
-          </div>
         </div>
         <div className="px-3">
           <div className="space-y-1">
@@ -85,6 +73,16 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
             >
               <FileInput className="mr-2 h-4 w-4" />
               待簽核文件
+            </Button>
+            <Button
+              variant={currentPath === "/public/me" ? "secondary" : "ghost"}
+              className="w-full justify-start"
+              onClick={() => {
+                router.push("/public/me")
+              }}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              我的公開文件
             </Button>
           </div>
         </div>

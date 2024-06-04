@@ -15,7 +15,7 @@ export default function RootLayout({
   // if path is /login, return the login layout
   if (pathname === "/login") {
     return (
-      <html lang="en">
+    <html lang="en" data-color-mode="light">
         <body className={inter.className}>
           <div className="flex"> {children}</div>
         </body>
@@ -23,7 +23,7 @@ export default function RootLayout({
     );
   }
   return (
-    <html lang="en">
+    <html lang="en" data-color-mode="light">
       <body className={inter.className}>
         <div className="flex">
           <Sidebar className="w-72 h-screen border" />
