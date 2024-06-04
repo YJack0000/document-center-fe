@@ -8,7 +8,7 @@ type PrivilegeDTO = {
 
 const getPrivilege = async (request: NextRequest): Promise<PrivilegeDTO> => {
     const cookie = request.headers.get('cookie')
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/privilege`, {
+    const response = await fetch(`https://document-center.cerana.tech/api/users/privilege`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
