@@ -45,10 +45,10 @@ jobs:
 
   
   build-and-push:
+    env:
+      NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
     needs: [cypress-e2e-test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    env:
-      NEXT_PUBLIC_APP_URL: ${{ var.NEXT_PUBLIC_APP_URL }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
