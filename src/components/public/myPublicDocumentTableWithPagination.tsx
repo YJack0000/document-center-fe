@@ -14,9 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
 import { useState } from "react"
-import { useDebounce } from "@/lib/debounce"
 
 const PublicDocumentTableWithPagination = () => {
     const [pageIndex, setPageIndex] = useState(1)
