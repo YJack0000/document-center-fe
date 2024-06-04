@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Pencil } from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -36,7 +36,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
-import { StatusBadge } from "../superuser/StatusBadge";
 
 export const columns: ColumnDef<DocumentDTO>[] = [
   {
@@ -54,15 +53,6 @@ export const columns: ColumnDef<DocumentDTO>[] = [
     ),
   },
   {
-    accessorKey: "status",
-    header: "狀態",
-    cell: ({ row }) => (
-      <div className="capitalize">
-        <StatusBadge status={row.getValue("status")} />
-      </div>
-    ),
-  },
-  {
     accessorKey: "updateAt",
     header: "更新時間",
     cell: ({ row }) => (
@@ -71,34 +61,10 @@ export const columns: ColumnDef<DocumentDTO>[] = [
       </div>
     ),
   },
-  {
-    accessorKey: "createAt",
-    header: "建立時間",
-    cell: ({ row }) => (
-      <div className="capitalize">
-        {new Date(row.getValue("createAt")).toLocaleString()}
-      </div>
-    ),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const document = row.original;
-      const router = useRouter();
-      return (
-        <Button
-          onClick={() => router.push(`/documents/${document.id}/edit`)}
-          disabled={document.status !== "edit"}
-        >
-          <Pencil className="mr-2 h-4 w-4" /> 編輯
-        </Button>
-      );
-    },
-  },
 ];
 
-export function DataTable({ data }: { data: DocumentDTO[] }) {
+export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
+  const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -154,6 +120,9 @@ export function DataTable({ data }: { data: DocumentDTO[] }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => {
+                    router.push(`/public/documents/${row.original.id}`);
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -171,7 +140,7 @@ export function DataTable({ data }: { data: DocumentDTO[] }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  沒有結果
                 </TableCell>
               </TableRow>
             )}

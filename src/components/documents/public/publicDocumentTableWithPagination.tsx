@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { DataTable } from "./documentTable";
+import { PublicDataTable } from "./publicDocumentTable";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -16,15 +16,10 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 
-const DocumentTableWithPagination = ({
-  type,
-}: {
-  type: "me" | "public_all";
-}) => {
+const PublicDocumentTableWithPagination = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const route =
-    type === "me" ? "/api/documents/me" : "/api/documents/public/all";
+  const route = "/api/documents/public/all";
 
   const { data, error, isLoading } = useSWR(
     `${route}?page=${pageIndex}&limit=${pageSize}`,
@@ -41,7 +36,7 @@ const DocumentTableWithPagination = ({
   if (error) return <div>Failed to fetch data</div>;
   return (
     <div className="flex items-center justify-between flex-col gap-2">
-      <DataTable data={data.data} />
+      <PublicDataTable data={data.data} />
       <div className="flex items-center justify-between px-2">
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
@@ -118,4 +113,4 @@ const DocumentTableWithPagination = ({
   );
 };
 
-export default DocumentTableWithPagination;
+export default PublicDocumentTableWithPagination;
