@@ -64,6 +64,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
 ];
 
 export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
+  const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -119,6 +120,9 @@ export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => {
+                    router.push(`/public/documents/${row.original.id}`);
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -136,7 +140,7 @@ export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  沒有結果
                 </TableCell>
               </TableRow>
             )}
