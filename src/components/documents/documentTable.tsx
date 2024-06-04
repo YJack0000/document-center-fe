@@ -43,6 +43,22 @@ import {
 } from "@/components/ui/table"
 import { useRouter } from "next/navigation"
 import { StatusBadge } from "../superuser/StatusBadge"
+import useSWR from "swr"
+
+const Reviewer = ({ documentId }: any) => {
+  const { data, error } = useSWR(`/api/reviews/${documentId}`, async (url) => {
+    const response = await fetch(url)
+    const data = await response.json()
+    return data.data
+  })
+  if (error) return <div>Failed to load</div>
+  if (!data) return <div>載入中</div>
+
+  if (data.length === 0) {
+    return <div>無</div>
+  }
+  return <div>{data[0].reviewer.name}</div>
+}
 
 export const columns: ColumnDef<DocumentDTO>[] = [
   {
@@ -85,6 +101,11 @@ export const columns: ColumnDef<DocumentDTO>[] = [
         {new Date(row.getValue("createAt")).toLocaleString()}
       </div>
     ),
+  },
+  {
+    accessorKey: "reviewer",
+    header: "審核者",
+    cell: ({ row }) => <Reviewer documentId={row.original.id} />,
   },
   {
     id: "actions",
