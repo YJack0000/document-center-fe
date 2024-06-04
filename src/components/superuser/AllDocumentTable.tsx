@@ -47,7 +47,7 @@ import {
 
 import SuperUserAllDocumnetSelectUser from "./SelectAssignReviewer"
 import SuperUserAllDocumnetShowReviewDialog from "./ReviewHistory"
-import { format } from 'date-fns';
+import { format, set } from 'date-fns';
 import SuperUserDeleteDocumentButton from "./DeleteDocumentButton"
 import SuperUserAssignReviewerButton from "./AssignReviewerButton"
 import RowSortingBtn from "./RowSortingBtn"
@@ -112,7 +112,7 @@ export default function SuperUserAllDocumnetTable() {
   const [pageIdx, setPageIdx] = useState(1)
   const [lastPageIdx, setLastPageIdx] = useState(1)
 
-  const { data, isLoading, error }
+  const { data, isLoading, error, isValidating }
     = useSWR<FetchedAllDocumentList>(`/api/documents/all?page=${pageIdx}&limit=${PAGE_SIZE}`,
       fetcher)
   const [tableData, setTableData] = useState<SuperuserAllDocumnetTableRow[]>([])
@@ -137,10 +137,10 @@ export default function SuperUserAllDocumnetTable() {
   const keys = tableData.map((data) => `/api/reviews/${data.documentId}`)
   // Fetch the data for each key
   const { data: reviewHistories, error: reviewError, mutate: updateReviewListDoc } = useSWR<FetchedReviewListPerDocument[]>(keys, multipleFetcher);
-
+  // console.log("Review histories", reviewHistories)
   useEffect(() => {
     if (reviewHistories) {
-      // console.log("Review histories")
+      console.log("Review histories")
       const tableDataWithReviews = tableData.map((data, idx) => {
         const reviewData = reviewHistories[idx]
         if (reviewData.data.length === 0) {
@@ -155,6 +155,8 @@ export default function SuperUserAllDocumnetTable() {
           reviewStatus: lastReviewer.status
         }
       })
+      console.log(reviewHistories)
+      console.log("Update reviewers to table data")
       setTableData(tableDataWithReviews)
     }
   }, [reviewHistories])
@@ -364,15 +366,13 @@ export default function SuperUserAllDocumnetTable() {
     return responses
   }
 
-  const handleChangeReviewers = (requestsInfo: { documentId: string, reviewerId: string }[]) => {
+  const handleChangeReviewers = (requestsInfo: { documentId: string, reviewerId: string}[]) => {
     console.log("Change reviewer")
 
-    changeReviewerFetcher(requestsInfo).then(() => {
-      // console.log("Change reviewer success")
-      requestsInfo.forEach(request => {
-        updateReviewListDoc()
-      })
-      // console.log("Mutate success")
+    changeReviewerFetcher(requestsInfo).then((newData) => {
+      setTimeout(() => {  // block 2 sec before refetch
+        mutate(keys)
+      }, 2000)
     }).catch((error) => {
       console.log("Change reviewer error", error)
     })
