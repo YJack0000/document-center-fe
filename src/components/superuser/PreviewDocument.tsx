@@ -9,8 +9,10 @@ import {
     DialogClose
 } from "@/components/ui/dialog"
 
-import MarkdownPreview from '@uiw/react-markdown-preview';
+import dynamic from "next/dynamic";
 import remarkGfm from 'remark-gfm'
+
+const MarkdownPreview = dynamic(() => import('@uiw/react-markdown-preview'), { ssr: false });
 
 export default function PreviewDocument({ documentTitle, documentContent } 
 : { documentTitle: string, documentContent: string }) {

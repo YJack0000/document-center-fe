@@ -31,3 +31,5 @@ coverage
 .env
 
 k8s/secrets.yml
+
+cypress/screenshots
