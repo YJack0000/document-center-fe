@@ -28,7 +28,7 @@ export default function RootLayout({
             <body className={inter.className}>
                 <NextTopLoader zIndex={1600} />
                 <div className="flex h-[100vh]">
-                    <Sidebar className="w-72 h-screen border" />
+                    <Sidebar className="max-w-60 h-screen border" />
                     {children}
                 </div>
                 <Toaster />
