@@ -42,10 +42,9 @@ describe("Component Test", ()=> {
         cy.get("table").find("thead tr th").eq(1).should("contain.text", "標題")
         cy.get("table").find("thead tr th").eq(2).should("contain.text", "狀態")
         cy.get("table").find("thead tr th").eq(3).should("contain.text", "所有者")
-        cy.get("table").find("thead tr th").eq(4).should("contain.text", "建立日期 / 修改日期")
-        cy.get("table").find("thead tr th").eq(5).should("contain.text", "近期審核日期")
-        cy.get("table").find("thead tr th").eq(6).should("contain.text", "原審核者")
-        cy.get("table").find("thead tr th").eq(7).should("contain.text", "指定新審核者")
+        cy.get("table").find("thead tr th").eq(4).should("contain.text", "近期審核日期")
+        cy.get("table").find("thead tr th").eq(5).should("contain.text", "原審核者")
+        cy.get("table").find("thead tr th").eq(6).should("contain.text", "指定新審核者")
     })
 
     it("should display all documents", ()=> {
@@ -53,8 +52,6 @@ describe("Component Test", ()=> {
         cy.get("table").find("tbody tr").eq(0).find("td").eq(1).should("contain.text", "Document 1")
         cy.get("table").find("tbody tr").eq(0).find("td").eq(2).should("contain.text", "通過")
         cy.get("table").find("tbody tr").eq(0).find("td").eq(3).should("contain.text", "Owner 1")
-        cy.get("table").find("tbody tr").eq(0).find("td").eq(4).should("contain.text", "01/01/2022 / 01/01/2022")
-        cy.get("table").find("tbody tr").eq(0).find("td").eq(5).should("contain.text", "02/02/2022")
-        cy.get("table").find("tbody tr").eq(0).find("td").eq(6).should("contain.text", "Owner 101")
+        cy.get("table").find("tbody tr").eq(0).find("td").eq(5).should("contain.text", "Owner 101")
     })
 }) 

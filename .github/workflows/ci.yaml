@@ -29,6 +29,9 @@ jobs:
     - name: Install dependencies for frontend
       run: |
         npm ci
+    - name: Copy env file
+      run: |
+        cp .env.example .env
     - name: Build frontend
       run: |
         npm run build
@@ -36,11 +39,19 @@ jobs:
       run: |
         npm run start &
 
-    - name: Cypress run
+    - name: Cypress run component tests
+      uses: cypress-io/github-action@v6
+      with:
+        component: true
+        browser: chrome
+        wait-on: 'http://127.0.0.1:3000'
+
+    - name: Cypress run e2e tests
       uses: cypress-io/github-action@v6
       with:
         browser: chrome
         wait-on: 'http://127.0.0.1:3000'
+        headed: true
   
   build-and-push:
     needs: [cypress-e2e-test]

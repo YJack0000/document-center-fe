@@ -76,3 +76,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  .markdown-list ul {
+    @apply list-disc;
+  }
+
+  .markdown-list ol {
+    @apply list-decimal;
+  }
+}

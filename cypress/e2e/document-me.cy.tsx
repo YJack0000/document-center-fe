@@ -6,11 +6,12 @@ describe("Component Test", ()=> {
             (req) => {
                 req.reply({fixture: "empty-mock.json"})
             }
-        )	
+        )		
     })
     
-    it("Visit /superuser/documents if not privilege user. Should redirect to login", () => {
-        cy.visit("/superuser/documents", {failOnStatusCode: false})
+    it("Visit /documents/me if not user.", () => {
+        cy.visit("/documents/me/", {failOnStatusCode: false})
         // cy.url().should("eq", "https://document-center.cerana.tech/login")
     })
-})
+
+}) 

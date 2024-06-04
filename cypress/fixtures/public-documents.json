@@ -1,0 +1,44 @@
+{
+    "data": [
+        {
+            "id": "D1",
+            "title": "Document 1",
+            "content": "This is the content of document 1",
+            "status": "edit",
+            "updateAt": "2024-06-04T10:45:52.781Z",
+            "createAt": "2024-06-04T10:45:52.781Z",
+            "owner": {
+                "id": "u1",
+                "name": "user1"
+            }
+        },
+        {
+            "id": "D2",
+            "title": "Document 2",
+            "content": "This is the content of document 2",
+            "status": "edit",
+            "updateAt": "2024-06-04T10:45:52.781Z",
+            "createAt": "2024-06-04T10:45:52.781Z",
+            "owner": {
+                "id": "u2",
+                "name": "user2"
+            }
+        },
+        {
+            "id": "D3",
+            "title": "Document 3",
+            "content": "This is the content of document 3",
+            "status": "edit",
+            "updateAt": "2024-06-04T10:45:52.781Z",
+            "createAt": "2024-06-04T10:45:52.781Z",
+            "owner": {
+                "id": "u3",
+                "name": "user3"
+            }
+        }
+    ],
+    "page": 1,
+    "limit": 10,
+    "total": 1
+}
+
