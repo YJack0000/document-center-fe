@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { SendReviewDialog } from "./sendReviewDialog";
 
 const DocumentEditor = ({ documentId }: { documentId: string }) => {
   const router = useRouter();
@@ -33,6 +34,10 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
 
   return (
     <div className="flex flex-col w-full gap-5">
+      <div className="w-full flex gap-2 justify-end">
+        <Button onClick={handleSave}>儲存</Button>
+        <SendReviewDialog documentId={document.id} />
+      </div>
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="id">文件ID</Label>
         <Input id="id" type="text" value={document.id} disabled />
@@ -54,8 +59,6 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
           onChange={(value) => setContent(value as string)}
         />
       </div>
-      <p>{document.status}</p>
-      <Button onClick={handleSave}>儲存</Button>
     </div>
   );
 };
