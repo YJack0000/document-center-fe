@@ -2,10 +2,13 @@
 import { FileText, FileInput, FileStack, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
     const router = useRouter();
+    const currentPath = usePathname();
+    console.log(currentPath)
+
     return (
         <div className={cn("pb-12", className)}>
             <div className="space-y-4 py-4">
@@ -23,7 +26,7 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
                     </h2>
                     <div className="space-y-1">
                         <Button
-                            variant="secondary"
+                            variant={currentPath === "/" ? "secondary" : "ghost"}
                             className="w-full justify-start"
                             onClick={() => {
                                 router.push("/");
@@ -40,7 +43,7 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
                             個人
                         </h2>
                         <Button
-                            variant="ghost"
+                            variant={currentPath === "/documents/me" ? "secondary" : "ghost"}
                             className="w-full justify-start"
                             onClick={() => {
                                 router.push("/documents/me");
@@ -63,7 +66,9 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
                             </svg>
                             我的文件
                         </Button>
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => router.push("/reviews")}>
+                        <Button
+                            variant={currentPath === "/reviews" ? "secondary" : "ghost"}
+                            className="w-full justify-start" onClick={() => router.push("/reviews")}>
                             <FileInput className="mr-2 h-4 w-4" />
                             待簽核文件
                         </Button>
@@ -75,7 +80,7 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
                     </h2>
                     <div className="space-y-1">
                         <Button
-                            variant="ghost"
+                            variant={currentPath === "/superuser/documents" ? "secondary" : "ghost"}
                             className="w-full justify-start"
                             onClick={() => {
                                 router.push("/superuser/documents");
