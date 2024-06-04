@@ -72,7 +72,7 @@ const PublicBtn = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={isPublic ? "success" : "warning"} className="ml-2">
+        <Button variant={isPublic ? "warning" : "success"} className="ml-2">
           {isPublic ? "取消公開" : "設為公開"}
         </Button>
       </AlertDialogTrigger>
