@@ -19,7 +19,7 @@ import { useState } from "react"
 const ReviewTableWithPagination = ({}: {}) => {
   const [pageIndex, setPageIndex] = useState(1)
   const [pageSize, setPageSize] = useState(10)
-  const route = "/api/reviews/me"
+  const route = "/api/documents/assigned/me"
 
   const { data, error, isLoading } = useSWR(
     `${route}?page=${pageIndex}&limit=${pageSize}`,

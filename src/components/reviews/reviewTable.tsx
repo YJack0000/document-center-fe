@@ -28,6 +28,7 @@ import {
   ArrowUpDown,
   ChevronDown,
   FilePen,
+  Loader2,
   MoreHorizontal,
   Pencil,
   Trash,
@@ -44,15 +45,29 @@ import {
 } from "@/components/ui/table"
 import { useRouter } from "next/navigation"
 import { StatusBadge } from "../superuser/StatusBadge"
+import useSWR from "swr"
+
+const ReviewTime = ({ documentId }: any) => {
+  const { data, error } = useSWR(`/api/reviews/${documentId}`, async (url) => {
+    const response = await fetch(url)
+    const data = await response.json()
+    return data.data
+  })
+  if (error) return <div>Failed to load</div>
+  if (!data) return <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+
+  if (data.length === 0) {
+    return <div>無</div>
+  }
+  return <div>{new Date(data[0].createdAt).toLocaleString()}</div>
+}
 
 export const columns: ColumnDef<DocumentDTO>[] = [
   {
-    accessorKey: "document",
+    accessorKey: "title",
     header: "標題",
     cell: ({ row }) => (
-      <div className="capitalize">
-        {(row.getValue("document") as any).title}
-      </div>
+      <div className="capitalize">{row.getValue("title")}</div>
     ),
   },
   {
@@ -67,20 +82,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
   {
     accessorKey: "updatedAt",
     header: "更新時間",
-    cell: ({ row }) => (
-      <div className="capitalize">
-        {new Date(row.getValue("updatedAt")).toLocaleString()}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "createdAt",
-    header: "建立時間",
-    cell: ({ row }) => (
-      <div className="capitalize">
-        {new Date(row.getValue("createdAt")).toLocaleString()}
-      </div>
-    ),
+    cell: ({ row }) => <ReviewTime documentId={row.original.id} />,
   },
   {
     id: "actions",
@@ -91,11 +93,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
       const router = useRouter()
       return (
         <>
-          <Button
-           
-            onClick={() => router.push(`/reviews/${document.document.id}/sign`)}
-            disabled={document.status !== "wait"}
-          >
+          <Button onClick={() => router.push(`/reviews/${document.id}/sign`)}>
             <FilePen /> 簽核
           </Button>
         </>
