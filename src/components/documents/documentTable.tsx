@@ -1,5 +1,16 @@
 "use client";
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import * as React from "react";
 import {
     ColumnDef,
@@ -16,17 +27,6 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
     Table,
     TableBody,
@@ -96,14 +96,30 @@ export const columns: ColumnDef<DocumentDTO>[] = [
                     >
                         <Pencil className="mr-2 h-4 w-4" /> 編輯
                     </Button>
-                    <Button
-                        className="ml-2"
-                        variant="destructive"
-                        onClick={() => router.push(`/documents/${document.id}/edit`)}
-                        disabled={document.status !== "edit"}
-                    >
-                        <Trash className="h-4 w-4" />
-                    </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button
+                                className="ml-2"
+                                variant="destructive"
+                                disabled={document.status !== "edit"}
+                            >
+                                <Trash className="h-4 w-4" />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>確定要刪除嗎？</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    這個動作執行之後將無法透過 UI 復原，請問要繼續動作嗎？
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogAction className="bg-destructive" onClick={() => { }}>
+                                    繼續</AlertDialogAction>
+                                <AlertDialogCancel>取消</AlertDialogCancel>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </>
             );
         },
