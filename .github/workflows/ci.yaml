@@ -10,6 +10,8 @@ on:
 
 jobs:
   cypress-e2e-test:
+    env:
+      NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -49,8 +51,6 @@ jobs:
       with:
         browser: chrome
         wait-on: 'http://127.0.0.1:3000'
-        
-
   
   build-and-push:
     needs: [cypress-e2e-test]
