@@ -18,7 +18,7 @@ export default function RootLayout({
         return (
             <html lang="en" data-color-mode="light">
                 <body className={inter.className}>
-                    <NextTopLoader />
+                    <NextTopLoader zIndex={1600} />
                     <div className="flex"> {children}</div>
                 </body>
             </html>
