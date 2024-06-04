@@ -73,7 +73,7 @@ const PublicBtn = ({
         <Button
           className={`ml-2 ${isPublic ? "bg-[#FFAA00]" : "bg-[#00AA00]"}`}
         >
-          {isPublic ? "取消公開" : "公開"}
+          {isPublic ? "取消公開" : "設為公開"}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -84,7 +84,6 @@ const PublicBtn = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogAction
-            className="bg-destructive"
             onClick={async () => {
               await fetch(`/api/documents/public/${documentId}`, {
                 method: "PUT",
