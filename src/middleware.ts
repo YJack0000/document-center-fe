@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
     }
 
     if (pathname.startsWith("/login")) {
-        const cookie = request.headers.get("cookie");
+        const cookie = request.headers.get("access_token");
         if (cookie) {
             // if the user is already logged in, redirect to the home page
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/`, {
@@ -52,7 +52,7 @@ export async function middleware(request: NextRequest) {
 
     // check if the user is logged in
     if (pathname.startsWith("/documents") || pathname.startsWith("/reviews")) {
-        const cookie = request.headers.get("cookie");
+        const cookie = request.headers.get("access_token");
         if (!cookie) {
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login`, {
                 status: RedirectStatusCode.TemporaryRedirect,
