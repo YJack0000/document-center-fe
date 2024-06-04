@@ -42,7 +42,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
     accessorKey: "title",
     header: "標題",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("title")}</div>
+      <div className="capitalize min-w-[200px]">{row.getValue("title")}</div>
     ),
   },
   {
