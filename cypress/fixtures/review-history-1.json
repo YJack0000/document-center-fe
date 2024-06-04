@@ -1,0 +1,19 @@
+{
+    "data": [
+        {
+            "id": "review-2",
+            "documentId": "D100",
+            "comment": "LGTM",
+            "status": "pass",
+            "createdAt": "2022-02-01T00:00:00Z",
+            "updatedAt": "2022-02-02T00:00:00Z",
+            "reviewer": {
+                "id": "O101",
+                "name": "Owner 101"
+            }
+        }
+    ],
+    "page": 1,
+    "limit": 10,
+    "total": 1
+}

@@ -1,0 +1,19 @@
+{
+    "data": [
+        {
+            "id": "review-1",
+            "documentId": "D1",
+            "comment": "This is a good document",
+            "status": "wait",
+            "createdAt": "2022-02-01T00:00:00Z",
+            "updatedAt": "2022-02-02T00:00:00Z",
+            "reviewer": {
+                "id": "O2",
+                "name": "Owner 2"
+            }
+        }
+    ],
+    "page": 1,
+    "limit": 10,
+    "total": 1
+}

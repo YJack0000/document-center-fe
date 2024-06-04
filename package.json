@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "cypress": "cypress open",
-    "test:cy": "cypress run --headless"
+    "test:cy": "npm run test:ct && npm run test:e2e",
+    "test:e2e": "cypress run --headless",
+    "test:ct": "cypress run --component --headless"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.4.2",
