@@ -43,6 +43,8 @@ import {
 import { useRouter } from "next/navigation"
 import { StatusBadge } from "../superuser/StatusBadge"
 import useSWR from "swr"
+import { Badge } from "../ui/badge"
+import clsx from "clsx"
 
 const Reviewer = ({ documentId }: any) => {
   const { data, error } = useSWR(`/api/reviews/${documentId}`, async (url) => {
@@ -70,9 +72,7 @@ const PublicBtn = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          className={`ml-2 ${isPublic ? "bg-[#FFAA00]" : "bg-[#00AA00]"}`}
-        >
+        <Button variant={isPublic ? "success" : "warning"} className="ml-2">
           {isPublic ? "取消公開" : "設為公開"}
         </Button>
       </AlertDialogTrigger>
@@ -117,7 +117,21 @@ export const columns: ColumnDef<DocumentDTO>[] = [
   },
   {
     accessorKey: "status",
-    header: "狀態",
+    header: "公開狀態",
+    cell: ({ row }) => (
+      <div className="capitalize">
+        <Badge
+          className={clsx("justify-center min-w-16 pointer-events-none")}
+          variant={row.getValue("isPublic") ? "success" : "warning"}
+        >
+          {row.getValue("isPublic") ? "公開" : "不公開"}
+        </Badge>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: "審核狀態",
     cell: ({ row }) => (
       <div className="capitalize">
         <StatusBadge status={row.getValue("status")} />
