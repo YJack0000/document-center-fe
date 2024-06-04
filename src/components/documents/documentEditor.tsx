@@ -3,7 +3,7 @@ import useDocument from "@/hooks/useDocument";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import MDEditor from "@uiw/react-md-editor";
+import MDEditor, { commands } from "@uiw/react-md-editor";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { SendReviewDialog } from "./sendReviewDialog";
