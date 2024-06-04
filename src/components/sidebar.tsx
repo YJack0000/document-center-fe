@@ -3,6 +3,7 @@ import { FileText, FileInput, FileStack, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useRouter, usePathname } from "next/navigation";
+import { error } from "console";
 
 export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
     const router = useRouter();
@@ -90,6 +91,15 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
                             所有文件
                         </Button>
                     </div>
+                </div>
+                <div className="flex p-3 gap-4">
+                    <Button onClick={() => {
+                        router.push("/login");
+                    }}>登錄</Button>
+                    <Button onClick={() => {
+                        fetch("/api/auth/logout").catch((error) => {console.error(error)})
+                        router.push("/")
+                    }}>登出</Button>
                 </div>
             </div>
         </div>
