@@ -36,6 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
+import { StatusBadge } from "../superuser/StatusBadge";
 
 export const columns: ColumnDef<DocumentDTO>[] = [
   {
@@ -56,7 +57,9 @@ export const columns: ColumnDef<DocumentDTO>[] = [
     accessorKey: "status",
     header: "狀態",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div className="capitalize">
+        <StatusBadge status={row.getValue("status")} />
+      </div>
     ),
   },
   {
