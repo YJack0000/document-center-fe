@@ -37,7 +37,7 @@ const DocumentTableWithPagination = ({
     }
   );
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>載入中...</div>;
   if (error) return <div>Failed to fetch data</div>;
   return (
     <div className="flex items-center justify-between flex-col gap-2">
@@ -45,7 +45,7 @@ const DocumentTableWithPagination = ({
       <div className="flex items-center justify-between px-2">
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Rows per page</p>
+            <p className="text-sm font-medium">每頁顯示：</p>
             <Select
               value={`${pageSize}`}
               onValueChange={(value) => {
@@ -63,9 +63,10 @@ const DocumentTableWithPagination = ({
                 ))}
               </SelectContent>
             </Select>
+            <p className="text-sm font-medium">筆</p>
           </div>
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {pageIndex} of {data.totalPage}
+            第 {pageIndex} 頁，共 {data.totalPage} 頁
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -74,7 +75,7 @@ const DocumentTableWithPagination = ({
               onClick={() => setPageIndex(1)}
               disabled={pageIndex === 1}
             >
-              <span className="sr-only">Go to first page</span>
+              <span className="sr-only">首頁</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -83,7 +84,7 @@ const DocumentTableWithPagination = ({
               onClick={() => setPageIndex(pageIndex > 1 ? 1 : pageIndex - 1)}
               disabled={pageIndex === 1}
             >
-              <span className="sr-only">Go to previous page</span>
+              <span className="sr-only">前一頁</span>
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -98,7 +99,7 @@ const DocumentTableWithPagination = ({
               }}
               disabled={pageIndex === data.totalPage}
             >
-              <span className="sr-only">Go to next page</span>
+              <span className="sr-only">下一頁</span>
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -107,7 +108,7 @@ const DocumentTableWithPagination = ({
               onClick={() => setPageIndex(data.totalPage)}
               disabled={pageIndex === data.totalPage}
             >
-              <span className="sr-only">Go to last page</span>
+              <span className="sr-only">末頁</span>
               <DoubleArrowRightIcon className="h-4 w-4" />
             </Button>
           </div>

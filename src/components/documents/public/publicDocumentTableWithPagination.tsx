@@ -32,7 +32,7 @@ const PublicDocumentTableWithPagination = () => {
     }
   );
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>載入中...</div>;
   if (error) return <div>Failed to fetch data</div>;
   return (
     <div className="flex items-center justify-between flex-col gap-2">
@@ -70,7 +70,7 @@ const PublicDocumentTableWithPagination = () => {
               onClick={() => setPageIndex(1)}
               disabled={pageIndex === 1}
             >
-              <span className="sr-only">Go to first page</span>
+              <span className="sr-only">首頁</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -79,7 +79,7 @@ const PublicDocumentTableWithPagination = () => {
               onClick={() => setPageIndex(pageIndex > 1 ? 1 : pageIndex - 1)}
               disabled={pageIndex === 1}
             >
-              <span className="sr-only">Go to previous page</span>
+              <span className="sr-only">前一頁</span>
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -94,7 +94,7 @@ const PublicDocumentTableWithPagination = () => {
               }}
               disabled={pageIndex === data.totalPage}
             >
-              <span className="sr-only">Go to next page</span>
+              <span className="sr-only">下一頁</span>
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -103,7 +103,7 @@ const PublicDocumentTableWithPagination = () => {
               onClick={() => setPageIndex(data.totalPage)}
               disabled={pageIndex === data.totalPage}
             >
-              <span className="sr-only">Go to last page</span>
+              <span className="sr-only">末頁</span>
               <DoubleArrowRightIcon className="h-4 w-4" />
             </Button>
           </div>
