@@ -1,4 +1,5 @@
 "use client";
+
 import PublicDocumentTableWithPagination from "@/components/documents/public/publicDocumentTableWithPagination";
 
 export default function Home() {
