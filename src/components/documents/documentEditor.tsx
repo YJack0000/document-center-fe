@@ -109,6 +109,7 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="id">內文</Label>
         <MDEditor
+          data-color-mode="light"
           value={content}
           onChange={(value) => setContent(value as string)}
           commands={[...commands.getCommands(), commands.group([], subChild)]}
