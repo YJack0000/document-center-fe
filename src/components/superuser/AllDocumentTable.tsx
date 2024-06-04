@@ -238,7 +238,7 @@ export default function SuperUserAllDocumnetTable() {
       accessorKey: "status",
       header: "狀態",
       cell: ({ row }) => {
-        if(row.original.reviewStatus === null) {
+        if(row.original.reviewStatus === null || row.original.reviewStatus === "transfer") {
           return (
             <StatusBadge status={row.original.status} />
           )

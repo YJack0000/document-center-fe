@@ -14,6 +14,8 @@ export function StatusBadge({ status }: { status: "pass" | "reject" | "review" |
                   ? (<Badge className="justify-center min-w-16 text-sx font-semibold text-blue-600 bg-blue-200 pointer-events-none"> 轉交 </Badge>)
                   : status === "edit"
                     ? (<Badge className="justify-center min-w-16 text-sx font-semibold text-gray-600 bg-gray-200 pointer-events-none"> 編輯中 </Badge>)
-                    : (<Badge className="justify-center min-w-16 text-sx font-semibold text-purple-600 bg-purple-200 pointer-events-none"> {status} </Badge>)}
+                    : status === "delete"
+                      ? (<Badge className="justify-center min-w-16 text-sx font-semibold text-purple-600 bg-purple-200 pointer-events-none"> 刪除 </Badge>)
+                      : (<Badge className="justify-center min-w-16 text-sx font-semibold text-orange-600 bg-orange-200 pointer-events-none"> {status} </Badge>)}
       </>)
 }
