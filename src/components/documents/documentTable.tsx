@@ -1,5 +1,4 @@
 "use client"
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -60,6 +59,48 @@ const Reviewer = ({ documentId }: any) => {
   return <div>{data[0].reviewer.name}</div>
 }
 
+const PublicBtn = ({
+  documentId,
+  isPublic,
+}: {
+  documentId: string
+  isPublic: boolean
+}) => {
+  //
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          className={`ml-2 ${isPublic ? "bg-[#FFAA00]" : "bg-[#00AA00]"}`}
+        >
+          {isPublic ? "取消公開" : "公開"}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            確定要設為{isPublic ? "不公開" : "公開"}嗎？
+          </AlertDialogTitle>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogAction
+            className="bg-destructive"
+            onClick={async () => {
+              await fetch(`/api/documents/public/${documentId}`, {
+                method: "PUT",
+                body: JSON.stringify({ isPublic: !isPublic }),
+              })
+              window.location.reload()
+            }}
+          >
+            確認
+          </AlertDialogAction>
+          <AlertDialogCancel>取消</AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
 export const columns: ColumnDef<DocumentDTO>[] = [
   {
     accessorKey: "title",
@@ -115,7 +156,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
       const document = row.original
       const router = useRouter()
       return (
-        <>
+        <div className="flex items-center">
           <Button
             className="hover:bg-blue-400"
             onClick={() => router.push(`/documents/${document.id}/edit`)}
@@ -156,7 +197,8 @@ export const columns: ColumnDef<DocumentDTO>[] = [
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </>
+          <PublicBtn documentId={document.id} isPublic={document?.isPublic} />
+        </div>
       )
     },
   },

@@ -20,6 +20,7 @@ type DocumentDTO = {
     status: string,
     updateAt: string,
     createAt: string,
+    isPublic: boolean,
     owner: {
         id: string,
         name: string
