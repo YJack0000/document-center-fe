@@ -2,7 +2,7 @@ describe("Component Test", ()=> {
     beforeEach(() =>{
         cy.intercept(
             "GET",
-            "/api/documents/public/all?page=1&limit=10",
+            "/api/documents/public/all?page=1&limit=10&search=",
             {fixture: "public-documents.json"}
         )
         cy.intercept(
