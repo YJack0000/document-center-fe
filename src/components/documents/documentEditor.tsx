@@ -1,26 +1,30 @@
-"use client";
-import useDocument from "@/hooks/useDocument";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
-import MDEditor, { commands } from "@uiw/react-md-editor";
-import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
-import { SendReviewDialog } from "./sendReviewDialog";
+"use client"
+import useDocument from "@/hooks/useDocument"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { useEffect, useState } from "react"
+import MDEditor, { commands } from "@uiw/react-md-editor"
+import { Button } from "../ui/button"
+import { useRouter } from "next/navigation"
+import { SendReviewDialog } from "./sendReviewDialog"
 
 function SubChildren({ close, execute, getState, textApi, dispatch }: any) {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(null)
   const upload = async () => {
-    // const data = new FormData();
-    // data.append("file", file as any);
+    const data = new FormData()
+    data.append("file", file as any)
 
-    // const res = await fetch("/api/upload-image", {
-    //   method: "POST",
-    //   body: data,
-    // });
-    // const json = await res.json();
-    textApi.replaceSelection("![image](https://picsum.photos/200/300)");
-  };
+    const res = await fetch("/api/upload-image", {
+      method: "POST",
+      body: data,
+    })
+    const json = await res.json()
+    const { fileName } = json
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/upload-image/${fileName}`
+    // encodeURI(url)
+
+    textApi.replaceSelection(`![image](${encodeURI(url)})`)
+  }
   return (
     <div style={{ width: 200, padding: 2 }}>
       <div>上傳圖片</div>
@@ -29,15 +33,15 @@ function SubChildren({ close, execute, getState, textApi, dispatch }: any) {
         id="file-input"
         accept="image/*"
         onChange={(e: any) => {
-          const file = e.target.files[0];
-          setFile(file);
+          const file = e.target.files[0]
+          setFile(file)
         }}
       />
       <Button type="button" onClick={upload}>
         上傳
       </Button>
     </div>
-  );
+  )
 }
 
 const subChild = {
@@ -53,18 +57,18 @@ const subChild = {
   ),
   children: (props: any) => <SubChildren {...props} />,
   buttonProps: { "aria-label": "Insert title" },
-};
+}
 
 const DocumentEditor = ({ documentId }: { documentId: string }) => {
-  const router = useRouter();
-  const { document, error, isLoading } = useDocument(documentId);
-  const [title, setTitle] = useState(document?.title);
-  const [content, setContent] = useState(document?.content);
+  const router = useRouter()
+  const { document, error, isLoading } = useDocument(documentId)
+  const [title, setTitle] = useState(document?.title)
+  const [content, setContent] = useState(document?.content)
 
   useEffect(() => {
-    setTitle(document?.title);
-    setContent(document?.content);
-  }, [document]);
+    setTitle(document?.title)
+    setContent(document?.content)
+  }, [document])
 
   const handleSave = async () => {
     await fetch(`/api/documents/${documentId}`, {
@@ -73,23 +77,25 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ title, content }),
-    });
-    router.push("/documents/me");
-  };
+    })
+    router.push("/documents/me")
+  }
 
-  if (isLoading) return <p>載入文件中...</p>;
+  if (isLoading) return <p>載入文件中...</p>
   if (error) {
     setTimeout(() => {
-      router.push("/documents/me");
-    }, 3000);
+      router.push("/documents/me")
+    }, 3000)
 
-    return <p>文件載入錯誤，三秒後返回...</p>;
+    return <p>文件載入錯誤，三秒後返回...</p>
   }
 
   return (
     <div className="flex flex-col w-full gap-5">
       <div className="w-full flex gap-2 justify-end">
-        <Button onClick={handleSave}>儲存</Button>
+        <Button className="hover:bg-blue-400" onClick={handleSave}>
+          儲存
+        </Button>
         <SendReviewDialog documentId={document.id} />
       </div>
       <div className="grid w-full items-center gap-1.5">
@@ -116,7 +122,7 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DocumentEditor;
+export default DocumentEditor

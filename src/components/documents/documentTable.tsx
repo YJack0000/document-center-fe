@@ -1,6 +1,17 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import * as React from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,21 +23,16 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Pencil } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@tanstack/react-table"
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+  ArrowUpDown,
+  ChevronDown,
+  MoreHorizontal,
+  Pencil,
+  Trash,
+} from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -34,9 +40,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useRouter } from "next/navigation";
-import { StatusBadge } from "../superuser/StatusBadge";
+} from "@/components/ui/table"
+import { useRouter } from "next/navigation"
+import { StatusBadge } from "../superuser/StatusBadge"
 
 export const columns: ColumnDef<DocumentDTO>[] = [
   {
@@ -82,30 +88,67 @@ export const columns: ColumnDef<DocumentDTO>[] = [
   },
   {
     id: "actions",
+    header: "操作",
     enableHiding: false,
     cell: ({ row }) => {
-      const document = row.original;
-      const router = useRouter();
+      const document = row.original
+      const router = useRouter()
       return (
-        <Button
-          onClick={() => router.push(`/documents/${document.id}/edit`)}
-          disabled={document.status !== "edit"}
-        >
-          <Pencil className="mr-2 h-4 w-4" /> 編輯
-        </Button>
-      );
+        <>
+          <Button
+            className="hover:bg-blue-400"
+            onClick={() => router.push(`/documents/${document.id}/edit`)}
+            disabled={document.status !== "edit"}
+          >
+            <Pencil className="mr-2 h-4 w-4" /> 編輯
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                className="ml-2"
+                variant="destructive"
+                disabled={document.status !== "edit"}
+              >
+                <Trash className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>確定要刪除嗎？</AlertDialogTitle>
+                <AlertDialogDescription>
+                  這個動作執行之後將無法透過 UI 復原，請問要繼續動作嗎？
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction
+                  className="bg-destructive"
+                  onClick={async () => {
+                    await fetch(`/api/documents/${document.id}`, {
+                      method: "DELETE",
+                    })
+                    window.location.reload()
+                  }}
+                >
+                  確認
+                </AlertDialogAction>
+                <AlertDialogCancel>取消</AlertDialogCancel>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      )
     },
   },
-];
+]
 
 export function DataTable({ data }: { data: DocumentDTO[] }) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  );
+  )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+    React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
     data,
@@ -124,7 +167,7 @@ export function DataTable({ data }: { data: DocumentDTO[] }) {
       columnVisibility,
       rowSelection,
     },
-  });
+  })
 
   return (
     <div className="w-full">
@@ -143,7 +186,7 @@ export function DataTable({ data }: { data: DocumentDTO[] }) {
                             header.getContext()
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -171,7 +214,7 @@ export function DataTable({ data }: { data: DocumentDTO[] }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  暫時沒有文件
                 </TableCell>
               </TableRow>
             )}
@@ -179,5 +222,5 @@ export function DataTable({ data }: { data: DocumentDTO[] }) {
         </Table>
       </div>
     </div>
-  );
+  )
 }

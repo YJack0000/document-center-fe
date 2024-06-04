@@ -52,7 +52,7 @@ export async function middleware(request: NextRequest) {
 
     // check if the user is logged in
     if (pathname.startsWith("/documents") || pathname.startsWith("/reviews")) {
-        const cookie = request.headers.get("access_token");
+        const cookie = request.cookies.get("access_token");
         if (!cookie) {
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login`, {
                 status: RedirectStatusCode.TemporaryRedirect,
