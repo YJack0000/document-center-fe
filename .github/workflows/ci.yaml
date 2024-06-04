@@ -10,6 +10,8 @@ on:
 
 jobs:
   cypress-e2e-test:
+    env:
+      NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
