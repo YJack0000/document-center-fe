@@ -61,45 +61,6 @@ const Reviewer = ({ documentId }: any) => {
   return <div>{data[0].reviewer.name}</div>
 }
 
-const PublicBtn = ({
-  documentId,
-  isPublic,
-}: {
-  documentId: string
-  isPublic: boolean
-}) => {
-  //
-  return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant={isPublic ? "warning" : "success"} className="ml-2">
-          {isPublic ? "取消公開" : "設為公開"}
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            確定要設為{isPublic ? "不公開" : "公開"}嗎？
-          </AlertDialogTitle>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogAction
-            onClick={async () => {
-              await fetch(`/api/documents/public/${documentId}`, {
-                method: "PUT",
-                body: JSON.stringify({ isPublic: !isPublic }),
-              })
-              window.location.reload()
-            }}
-          >
-            確認
-          </AlertDialogAction>
-          <AlertDialogCancel>取消</AlertDialogCancel>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  )
-}
 export const columns: ColumnDef<DocumentDTO>[] = [
   {
     accessorKey: "title",
@@ -113,20 +74,6 @@ export const columns: ColumnDef<DocumentDTO>[] = [
     header: "擁有者",
     cell: ({ row }) => (
       <div className="capitalize">{(row.getValue("owner") as any)["name"]}</div>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "公開狀態",
-    cell: ({ row }) => (
-      <div className="capitalize">
-        <Badge
-          className={clsx("justify-center min-w-16 pointer-events-none")}
-          variant={row.getValue("isPublic") ? "success" : "warning"}
-        >
-          {row.getValue("isPublic") ? "公開" : "不公開"}
-        </Badge>
-      </div>
     ),
   },
   {
@@ -171,7 +118,6 @@ export const columns: ColumnDef<DocumentDTO>[] = [
       return (
         <div className="flex items-center">
           <Button
-           
             onClick={() => router.push(`/documents/${document.id}/edit`)}
             disabled={document.status !== "edit"}
           >
@@ -210,7 +156,6 @@ export const columns: ColumnDef<DocumentDTO>[] = [
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <PublicBtn documentId={document.id} isPublic={document?.isPublic} />
         </div>
       )
     },
