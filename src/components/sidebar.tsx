@@ -107,7 +107,22 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
             </Button>
           </div>
         </div>
-      </div>
-    </div>
-  )
+				<div className="px-3">
+					<Button className="m-4"
+						onClick={() => router.push("/login")}
+					>
+						登錄
+					</Button>
+					<Button className="m-4"
+						onClick={() => {
+							fetch("/api/auth/logout").catch(console.error)
+							router.push("/")
+						}}
+					>
+						登出
+					</Button>
+				</div>
+			</div>
+		</div>
+	)
 }
