@@ -47,9 +47,9 @@ jobs:
   build-and-push:
     needs: [cypress-e2e-test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
     env:
-      NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+      NEXT_PUBLIC_APP_URL: ${{ var.NEXT_PUBLIC_APP_URL }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v1
