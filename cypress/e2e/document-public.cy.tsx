@@ -8,8 +8,7 @@ describe("Component Test", ()=> {
         )
     })
     
-    it("Visit / if not privilege user or . Should redirect to login page", () => {
-        
+    it("Visit root", () => {
         cy.location("pathname").should("eq", "/")
     })
 

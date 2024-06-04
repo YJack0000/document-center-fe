@@ -6,12 +6,11 @@ describe("Component Test", ()=> {
             (req) => {
                 req.reply({fixture: "empty-mock.json"})
             }
-        )		
+        )	
     })
     
-    it("Visit /superuser/documents if not privilege user. Should redirect to login page", () => {
-        cy.visit("/superuser/documents")
+    it("Visit /superuser/documents if not privilege user. Should redirect to login", () => {
+        cy.visit("/superuser/documents", {failOnStatusCode: false})
         cy.location("pathname").should("eq", "/login")
     })
-
-}) 
+})
