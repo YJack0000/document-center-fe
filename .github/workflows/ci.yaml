@@ -51,6 +51,7 @@ jobs:
       with:
         browser: chrome
         wait-on: 'http://127.0.0.1:3000'
+        headed: true
   
   build-and-push:
     needs: [cypress-e2e-test]
