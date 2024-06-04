@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,11 +12,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+} from "@tanstack/react-table"
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -25,8 +25,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -34,8 +34,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useRouter } from "next/navigation";
+} from "@/components/ui/table"
+import { useRouter } from "next/navigation"
 
 export const columns: ColumnDef<DocumentDTO>[] = [
   {
@@ -61,17 +61,17 @@ export const columns: ColumnDef<DocumentDTO>[] = [
       </div>
     ),
   },
-];
+]
 
 export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
-  const router = useRouter();
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const router = useRouter()
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  );
+  )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+    React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
     data,
@@ -90,7 +90,7 @@ export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
       columnVisibility,
       rowSelection,
     },
-  });
+  })
 
   return (
     <div className="w-full">
@@ -109,7 +109,7 @@ export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
                             header.getContext()
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -118,10 +118,11 @@ export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
+                  className="cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out"
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   onClick={() => {
-                    router.push(`/public/documents/${row.original.id}`);
+                    router.push(`/public/documents/${row.original.id}`)
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -148,5 +149,5 @@ export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
         </Table>
       </div>
     </div>
-  );
+  )
 }
