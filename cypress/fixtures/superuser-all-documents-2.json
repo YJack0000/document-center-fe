@@ -1,0 +1,31 @@
+{
+    "data": [
+        {
+            "id": "D100",
+            "title": "Document 100",
+            "content": "Content 100",
+            "status": "pass",
+            "updateAt": "2022-01-01T00:00:00Z",
+            "createAt": "2022-01-01T00:00:00Z",
+            "owner": {
+              "id": "O100",
+              "name": "Owner 100"
+            }
+        },
+        {
+            "id": "D101",
+            "title": "Document 101",
+            "content": "Content 101",
+            "status": "edit",
+            "updateAt": "2022-01-01T00:00:00Z",
+            "createAt": "2022-01-01T00:00:00Z",
+            "owner": {
+              "id": "O101",
+              "name": "Owner 101"
+            }
+        }
+    ],
+    "page": 2,
+    "limit": 10,
+    "total": 2
+}

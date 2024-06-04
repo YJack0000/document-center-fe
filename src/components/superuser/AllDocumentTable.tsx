@@ -58,7 +58,7 @@ import { use } from "chai"
 import { useToast } from "../ui/use-toast"
 import { Toaster } from "../ui/toaster"
 
-const PAGE_SIZE = 2
+const PAGE_SIZE = 10
 
 type FetchedAllDocumentList = PagedWrapper<DocumentDTO>
 type FetchedReviewListPerDocument = PagedWrapper<ReviewInfoDTO>
@@ -146,7 +146,7 @@ export default function SuperUserAllDocumnetTable() {
         const lastReviewer = reviewData.data[0] // order is by desc
         return {
           ...data,
-          reviewedAt: lastReviewer.createdAt,
+          reviewedAt: lastReviewer.updatedAt ? lastReviewer.updatedAt : lastReviewer.createdAt,
           reviewer: lastReviewer.reviewer,
           reviewStatus: lastReviewer.status
         }
