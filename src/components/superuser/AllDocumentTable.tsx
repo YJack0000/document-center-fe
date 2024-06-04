@@ -57,6 +57,7 @@ import { StatusBadge } from "./StatusBadge"
 import { use } from "chai"
 import { useToast } from "../ui/use-toast"
 import { Toaster } from "../ui/toaster"
+import PreviewDocument from "./PreviewDocument"
 
 const PAGE_SIZE = 10
 
@@ -66,6 +67,7 @@ type FetchedReviewListPerDocument = PagedWrapper<ReviewInfoDTO>
 type SuperuserAllDocumnetTableRow = {
   documentId: string,
   title: string,
+  content: string,
   status: string,
   createdAt: string,
   editedAt: string,
@@ -80,6 +82,7 @@ function convertToSuperuserTableRow(data: DocumentDTO): SuperuserAllDocumnetTabl
   return {
     documentId: data.id,
     title: data.title,
+    content: data.content,
     status: data.status,
     owner: {
       id: data.owner.id,
@@ -223,7 +226,7 @@ export default function SuperUserAllDocumnetTable() {
       header: "標題",
       cell: ({ row }) => {
         return (
-          <div className="w-[10rem]">{row.original.title}</div>
+          <PreviewDocument documentTitle={row.original.title} documentContent={row.original.content} />
         )
       }
     },
