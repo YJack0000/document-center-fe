@@ -11,12 +11,12 @@ describe("Component Test", ()=> {
         )
         cy.intercept(
             "GET",
-            "/api/documents/all?page=1&limit=10",
+            "/api/documents/all?page=1&limit=10&search=",
             {fixture: "superuser-all-documents-1.json"}
         )
         cy.intercept(
             "GET",
-            "/api/documents/all?page=2&limit=10",
+            "/api/documents/all?page=2&limit=10&search=",
             {fixture: "superuser-all-documents-2.json"}
         )
 				cy.intercept(
