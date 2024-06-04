@@ -93,10 +93,14 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
                     </div>
                 </div>
                 <div className="flex p-3 gap-4">
-                    <Button onClick={() => {
+                    <Button 
+                        className="hover:bg-blue-400"
+                        onClick={() => {
                         router.push("/login");
                     }}>登錄</Button>
-                    <Button onClick={() => {
+                    <Button 
+                        className="hover:bg-blue-400"
+                        onClick={() => {
                         fetch("/api/auth/logout").catch((error) => {console.error(error)})
                         router.push("/")
                     }}>登出</Button>
