@@ -1,126 +1,92 @@
 "use client";
+import { FileText, FileInput, FileStack, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
-  const router = useRouter();
-  return (
-    <div className={cn("pb-12", className)}>
-      <div className="space-y-4 py-4">
-        <h1
-          className="text-2xl font-semibold text-center"
-          onClick={() => {
-            router.push("/");
-          }}
-        >
-          Document Center
-        </h1>
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            公開文件
-          </h2>
-          <div className="space-y-1">
-            <Button
-              variant="secondary"
-              className="w-full justify-start"
-              onClick={() => {
-                router.push("/");
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2 h-4 w-4"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <polygon points="10 8 16 12 10 16 10 8" />
-              </svg>
-              公開文件
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => {
-                router.push("/documents/me");
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2 h-4 w-4"
-              >
-                <rect width="7" height="7" x="3" y="3" rx="1" />
-                <rect width="7" height="7" x="14" y="3" rx="1" />
-                <rect width="7" height="7" x="14" y="14" rx="1" />
-                <rect width="7" height="7" x="3" y="14" rx="1" />
-              </svg>
-              我的文件
-            </Button>
-            <Button variant="ghost" className="w-full justify-start">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2 h-4 w-4"
-              >
-                <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9" />
-                <path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5" />
-                <circle cx="12" cy="12" r="2" />
-                <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5" />
-                <path d="M19.1 4.9C23 8.8 23 15.1 19.1 19" />
-              </svg>
-              待簽核文件
-            </Button>
-          </div>
+    const router = useRouter();
+    return (
+        <div className={cn("pb-12", className)}>
+            <div className="space-y-4 py-4">
+                <h1
+                    className="text-2xl font-semibold text-center my-4"
+                    onClick={() => {
+                        router.push("/");
+                    }}
+                >
+                    文件中心
+                </h1>
+                <div className="px-3">
+                    <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+                        公開
+                    </h2>
+                    <div className="space-y-1">
+                        <Button
+                            variant="secondary"
+                            className="w-full justify-start"
+                            onClick={() => {
+                                router.push("/");
+                            }}
+                        >
+                            <FileText className="mr-2 h-4 w-4" />
+                            公開文件
+                        </Button>
+                    </div>
+                </div>
+                <div className="px-3">
+                    <div className="space-y-1">
+                        <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+                            個人
+                        </h2>
+                        <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            onClick={() => {
+                                router.push("/documents/me");
+                            }}
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="mr-2 h-4 w-4"
+                            >
+                                <rect width="7" height="7" x="3" y="3" rx="1" />
+                                <rect width="7" height="7" x="14" y="3" rx="1" />
+                                <rect width="7" height="7" x="14" y="14" rx="1" />
+                                <rect width="7" height="7" x="3" y="14" rx="1" />
+                            </svg>
+                            我的文件
+                        </Button>
+                        <Button variant="ghost" className="w-full justify-start" onClick={() => router.push("/reviews")}>
+                            <FileInput className="mr-2 h-4 w-4" />
+                            待簽核文件
+                        </Button>
+                    </div>
+                </div>
+                <div className="px-3">
+                    <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+                        管理者
+                    </h2>
+                    <div className="space-y-1">
+                        <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            onClick={() => {
+                                router.push("/superuser/documents");
+                            }}
+                        >
+                            <FileStack className="mr-2 h-4 w-4" />
+                            所有文件
+                        </Button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            管理者
-          </h2>
-          <div className="space-y-1">
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => {
-                router.push("/superuser/documents");
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2 h-4 w-4"
-              >
-                <path d="M21 15V6" />
-                <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                <path d="M12 12H3" />
-                <path d="M16 6H3" />
-                <path d="M12 18H3" />
-              </svg>
-              所有文件
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }

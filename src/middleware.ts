@@ -15,48 +15,48 @@ const getPrivilege = async (request: NextRequest): Promise<PrivilegeDTO> => {
             'cookie': cookie || '',
         },
     })
-    
+
     return await response.json()
 }
 
 export async function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-  if (
-    pathname.startsWith("/_next") || // exclude Next.js internals
-    pathname.startsWith("/api") || //  exclude all API routes
-    pathname.startsWith("/static") || // exclude static files
-    pathname.startsWith("/favicon.ico") // exclude favicon
-  ) {
-    return NextResponse.next();
-  }
+    const pathname = request.nextUrl.pathname;
+    if (
+        pathname.startsWith("/_next") || // exclude Next.js internals
+        pathname.startsWith("/api") || //  exclude all API routes
+        pathname.startsWith("/static") || // exclude static files
+        pathname.startsWith("/favicon.ico") // exclude favicon
+    ) {
+        return NextResponse.next();
+    }
 
-  if (pathname.startsWith("/login")) {
-    const cookie = request.headers.get("cookie");
-    if (cookie) {
-      // if the user is already logged in, redirect to the home page
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/`, {
-        status: RedirectStatusCode.TemporaryRedirect,
-      });
+    if (pathname.startsWith("/login")) {
+        const cookie = request.headers.get("cookie");
+        if (cookie) {
+            // if the user is already logged in, redirect to the home page
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/`, {
+                status: RedirectStatusCode.TemporaryRedirect,
+            });
+        }
+        return NextResponse.next();
     }
-    return NextResponse.next();
-  }
-  if (request.nextUrl.pathname.startsWith("/superuser")) {
-    const privilege = await getPrivilege(request);
-    if (privilege.privilege !== "superuser") {
-      console.log(privilege);
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/`, {
-        status: RedirectStatusCode.TemporaryRedirect,
-      });
-    }
-  }
 
-  // check if the user is logged in
-  if (pathname.startsWith("/documents")) {
-    const cookie = request.headers.get("cookie");
-    if (!cookie) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login`, {
-        status: RedirectStatusCode.TemporaryRedirect,
-      });
+    if (request.nextUrl.pathname.startsWith("/superuser")) {
+        const privilege = await getPrivilege(request);
+        if (privilege.privilege !== "superuser") {
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login`, {
+                status: RedirectStatusCode.TemporaryRedirect,
+            });
+        }
     }
-  }
+
+    // check if the user is logged in
+    if (pathname.startsWith("/documents") || pathname.startsWith("/reviews")) {
+        const cookie = request.headers.get("cookie");
+        if (!cookie) {
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login`, {
+                status: RedirectStatusCode.TemporaryRedirect,
+            });
+        }
+    }
 }

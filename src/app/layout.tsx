@@ -26,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div className="flex">
-          <Sidebar className="w-60 h-screen border" />
+          <Sidebar className="w-72 h-screen border" />
           {children}
         </div>
         <Toaster />
