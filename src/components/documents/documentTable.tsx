@@ -120,12 +120,16 @@ export const columns: ColumnDef<DocumentDTO>[] = [
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                // [TODO]: Add delete handler to the AlertDialogAction component
                 <AlertDialogAction
                   className="bg-destructive"
-                  onClick={() => {}}
+                  onClick={async () => {
+                    await fetch(`/api/documents/${document.id}`, {
+                      method: "DELETE",
+                    })
+                    window.location.reload()
+                  }}
                 >
-                  繼續
+                  確認
                 </AlertDialogAction>
                 <AlertDialogCancel>取消</AlertDialogCancel>
               </AlertDialogFooter>
