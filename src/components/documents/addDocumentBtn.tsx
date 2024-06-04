@@ -20,7 +20,7 @@ export default function ButtonWithIcon() {
         router.push(`/documents/${id}/edit`);
     };
     return (
-        <Button className="hover:bg-blue-400" onClick={handleClick}>
+        <Button onClick={handleClick}>
             <CirclePlus className="mr-2 h-4 w-4" /> 新增文件
         </Button>
     );

@@ -5,5 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3000"
+    environment:
+        NEXT_PUBLIC_APP_URL: https://document-center.cerana.tech
     

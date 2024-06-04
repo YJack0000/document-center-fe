@@ -93,7 +93,7 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
   return (
     <div className="flex flex-col w-full gap-5">
       <div className="w-full flex gap-2 justify-end">
-        <Button className="hover:bg-blue-400" onClick={handleSave}>
+        <Button onClick={handleSave}>
           儲存
         </Button>
         <SendReviewDialog documentId={document.id} />
@@ -115,6 +115,7 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="id">內文</Label>
         <MDEditor
+          height={"500px"}
           data-color-mode="light"
           value={content}
           onChange={(value) => setContent(value as string)}

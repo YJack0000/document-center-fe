@@ -1,9 +1,6 @@
 # Build Stage
 FROM node:20-alpine AS BUILD_IMAGE
 
-ARG NEXT_PUBLIC_APP_URL
-ENV NEXT_PUBLIC_APP_URL=NEXT_PUBLIC_APP_URL
-
 WORKDIR /build
 COPY package*.json ./
 RUN npm ci
