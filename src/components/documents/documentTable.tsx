@@ -171,7 +171,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
       return (
         <div className="flex items-center">
           <Button
-            className="hover:bg-blue-400"
+           
             onClick={() => router.push(`/documents/${document.id}/edit`)}
             disabled={document.status !== "edit"}
           >

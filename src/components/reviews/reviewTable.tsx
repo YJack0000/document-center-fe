@@ -92,7 +92,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
       return (
         <>
           <Button
-            className="hover:bg-blue-400"
+           
             onClick={() => router.push(`/reviews/${document.document.id}/sign`)}
             disabled={document.status !== "wait"}
           >

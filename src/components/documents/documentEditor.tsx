@@ -93,7 +93,7 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
   return (
     <div className="flex flex-col w-full gap-5">
       <div className="w-full flex gap-2 justify-end">
-        <Button className="hover:bg-blue-400" onClick={handleSave}>
+        <Button onClick={handleSave}>
           儲存
         </Button>
         <SendReviewDialog documentId={document.id} />
