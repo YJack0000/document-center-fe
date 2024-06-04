@@ -10,7 +10,7 @@ describe("Component Test", ()=> {
     })
     
     it("Visit /superuser/documents if not privilege user. Should redirect to login", () => {
-        cy.visit("/documents/me")
-        cy.location("pathname").should("eq", "/login")
+        cy.visit("/superuser/documents", {failOnStatusCode: false})
+        cy.url().should("eq", "https://document-center.cerana.tech/login")
     })
 })

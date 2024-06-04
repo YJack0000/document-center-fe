@@ -10,8 +10,8 @@ describe("Component Test", ()=> {
     })
     
     it("Visit /documents/me if not user.", () => {
-        cy.visit("/documents/me")
-        cy.location("pathname").should("eq", "/login")
+        cy.visit("/documents/me/", {failOnStatusCode: false})
+        cy.url().should("eq", "https://document-center.cerana.tech/login")
     })
 
 }) 
