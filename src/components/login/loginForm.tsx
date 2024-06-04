@@ -25,7 +25,7 @@ export default function LoginForm() {
           variant="outline"
           className="w-full p-2"
           onClick={() => {
-            router.push("https://document-center.cerana.tech/api/auth/github");
+            router.push(`${process.env.NEXT_PUBLIC_APP_URL}/api/auth/github`);
           }}
         >
           <GithubIcon />
@@ -35,7 +35,7 @@ export default function LoginForm() {
           variant="outline"
           className="w-full p-2 mt-2"
           onClick={() => {
-            router.push("https://document-center.cerana.tech/api/auth/google");
+            router.push(`${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google`);
           }}
         >
           <GoogleIcon />
