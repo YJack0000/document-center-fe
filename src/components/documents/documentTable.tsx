@@ -92,11 +92,11 @@ export const columns: ColumnDef<DocumentDTO>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>動作</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => router.push(`/documents/${document.id}/edit`)}
             >
-              Edit
+              編輯
             </DropdownMenuItem>
             <DropdownMenuSeparator />
           </DropdownMenuContent>
