@@ -41,12 +41,8 @@ jobs:
       with:
         browser: chrome
         wait-on: 'http://127.0.0.1:3000'
-        
-
   
   build-and-push:
-    env:
-      NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
     needs: [cypress-e2e-test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -64,6 +60,8 @@ jobs:
           file: Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/document-center-fe:v${{ github.run_number }}
+          env: 
+            NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
       - name: Update k8s config
         run: |
           sed -i "s|yjack0000cs12/document-center-fe:v[0-9]*|yjack0000cs12/document-center-fe:v${{ github.run_number }}|" ./k8s/deploys.yml
