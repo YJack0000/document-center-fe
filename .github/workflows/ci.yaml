@@ -60,7 +60,7 @@ jobs:
           file: Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/document-center-fe:v${{ github.run_number }}
-          env: 
+          secret-envs: 
             NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
       - name: Update k8s config
         run: |
