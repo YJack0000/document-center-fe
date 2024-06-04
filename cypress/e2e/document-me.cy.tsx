@@ -9,8 +9,8 @@ describe("Component Test", ()=> {
         )		
     })
     
-    it("Visit /superuser/documents if not privilege user. Should redirect to login page", () => {
-        cy.visit("/superuser/documents")
+    it("Visit /documents/me if not user. Should pass", () => {
+        cy.visit("/documents/me")
         cy.location("pathname").should("eq", "/login")
     })
 
