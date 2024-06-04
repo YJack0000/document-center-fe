@@ -7,7 +7,6 @@ import MDEditor from "@uiw/react-md-editor";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { SendReviewDialog } from "./sendReviewDialog";
-import "../index.css";
 
 const DocumentEditor = ({ documentId }: { documentId: string }) => {
     const router = useRouter();

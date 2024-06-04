@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -29,6 +28,9 @@ export default function PreviewDocument({ documentTitle, documentContent }
                         remarkPlugins={[remarkGfm]}
                         source={documentContent}
                         className='markdown-list'
+                        wrapperElement={{
+                            "data-color-mode": "light"
+                        }}
                     />
                 </div>
                 <DialogFooter>

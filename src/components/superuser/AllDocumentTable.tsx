@@ -226,7 +226,10 @@ export default function SuperUserAllDocumnetTable() {
       header: "標題",
       cell: ({ row }) => {
         return (
-          <PreviewDocument documentTitle={row.original.title} documentContent={row.original.content} />
+          <div>
+            <PreviewDocument documentTitle={row.original.title} documentContent={row.original.content} />
+          </div>
+          // <div>{row.original.title}</div>
         )
       }
     },

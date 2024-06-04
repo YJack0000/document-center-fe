@@ -24,6 +24,9 @@ export default function DocumentRender({documentId}: {documentId: string}) {
 
                     <div id="Document" className='p-2 w-4/5 min-w-[700px]'>
                         <MarkdownPreview
+                            wrapperElement={{
+                                "data-color-mode": "light"
+                            }}
                             remarkPlugins={[remarkGfm]}
                             source={documentInfo?.content}
                             className='markdown-list min-w-[700px] max-w-[800px]'
