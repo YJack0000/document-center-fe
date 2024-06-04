@@ -61,7 +61,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/document-center-fe:v${{ github.run_number }}
           secret-envs: 
-            NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+            NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
       - name: Update k8s config
         run: |
           sed -i "s|yjack0000cs12/document-center-fe:v[0-9]*|yjack0000cs12/document-center-fe:v${{ github.run_number }}|" ./k8s/deploys.yml
