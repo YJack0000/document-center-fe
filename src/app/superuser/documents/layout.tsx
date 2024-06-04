@@ -5,7 +5,7 @@ export default function SuperUserAllDocumnetLayout({
 }: {children: React.ReactNode}
 ){
     return (
-        <div className="mx-auto px-2 flex justify-center">
+        <div className="mx-auto px-2 flex justify-center overflow-y-scroll">
             {children}
         </div>
     )

@@ -18,7 +18,6 @@ export default function RootLayout({
         return (
             <html lang="en" data-color-mode="light">
                 <body className={inter.className}>
-                    <NextTopLoader zIndex={1600} />
                     <div className="flex"> {children}</div>
                 </body>
             </html>
@@ -27,7 +26,8 @@ export default function RootLayout({
     return (
         <html lang="en" data-color-mode="light">
             <body className={inter.className}>
-                <div className="flex">
+                <NextTopLoader zIndex={1600} />
+                <div className="flex h-[100vh]">
                     <Sidebar className="w-72 h-screen border" />
                     {children}
                 </div>

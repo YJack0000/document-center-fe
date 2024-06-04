@@ -58,7 +58,7 @@ import PreviewDocument from "./PreviewDocument"
 import DocumentDate from "./DocumentDate"
 import useDebounce from "@/lib/debounce"
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 8
 
 type FetchedAllDocumentList = PagedWrapper<DocumentDTO>
 type FetchedReviewListPerDocument = PagedWrapper<ReviewInfoDTO>
