@@ -28,7 +28,7 @@ function SubChildren({ close, execute, getState, textApi, dispatch }: any) {
     })
     const json = await res.json()
     const { fileName } = json
-    const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/upload-image/${fileName}`
+    const url = `/api/upload-image/${fileName}`
     textApi.replaceSelection(`![image](${encodeURI(url)})\n`)
 
     if (fileInputRef.current) {
