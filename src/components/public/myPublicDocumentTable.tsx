@@ -56,6 +56,7 @@ const PublicBtn = ({
   isPublic: boolean
 }) => {
   //
+  const router = useRouter()
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -79,7 +80,7 @@ const PublicBtn = ({
                 },
                 body: JSON.stringify({ isPublic: !isPublic }),
               })
-              window.location.reload()
+              router.refresh()
             }}
           >
             確認
@@ -95,16 +96,19 @@ export const columns: ColumnDef<DocumentDTO>[] = [
   {
     accessorKey: "title",
     header: "標題",
-    cell: ({ row }) => (
-      <div
-        className="capitalize cursor-pointer hover:underline"
-        onClick={() => {
-          window.location.href = `/public/documents/${row.original.id}`
-        }}
-      >
-        {row.getValue("title")}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const router = useRouter()
+      return (
+        <div
+          className="capitalize cursor-pointer hover:underline"
+          onClick={() => {
+            router.push(`/public/documents/${row.original.id}`)
+          }}
+        >
+          {row.getValue("title")}
+        </div>
+      )
+    },
   },
   {
     accessorKey: "owner",

@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/dialog"
 import { useState } from "react"
 import { Textarea } from "../ui/textarea"
+import { useRouter } from "next/navigation"
 
 export default function SendReviewDialog({ documentId }: any) {
   const [comment, setComment] = useState<string>("")
+  const router = useRouter()
   const handleSend = async () => {
     await fetch(`/api/reviews/${documentId}/reject`, {
       method: "PUT",
@@ -21,7 +23,7 @@ export default function SendReviewDialog({ documentId }: any) {
       },
       body: JSON.stringify({ comment }),
     })
-    window.location.href = "/reviews"
+    router.push("/reviews")
   }
   return (
     <Dialog>

@@ -148,7 +148,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
                     await fetch(`/api/documents/${document.id}`, {
                       method: "DELETE",
                     })
-                    window.location.reload()
+                    router.refresh()
                   }}
                 >
                   確認

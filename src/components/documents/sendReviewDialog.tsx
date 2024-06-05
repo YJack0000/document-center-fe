@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -7,14 +7,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import SuperuserAllDocumnetSelectUser from "../superuser/SelectAssignReviewer";
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useState } from "react"
+import SuperuserAllDocumnetSelectUser from "../superuser/SelectAssignReviewer"
+import { useRouter } from "next/navigation"
 
 export function SendReviewDialog({ documentId }: any) {
-  const [reviewer, setReviewer] = useState<UserInfo | null>(null);
+  const [reviewer, setReviewer] = useState<UserInfo | null>(null)
+  const router = useRouter()
   const handleSend = async () => {
     await fetch(`/api/reviews/${documentId}/assign`, {
       method: "POST",
@@ -22,9 +24,9 @@ export function SendReviewDialog({ documentId }: any) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ reviewerId: reviewer?.id }),
-    });
-    window.location.href = "/documents/me";
-  };
+    })
+    router.push("/documents/me")
+  }
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -55,5 +57,5 @@ export function SendReviewDialog({ documentId }: any) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
