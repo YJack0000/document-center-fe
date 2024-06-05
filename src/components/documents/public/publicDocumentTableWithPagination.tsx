@@ -68,7 +68,7 @@ const PublicDocumentTableWithPagination = () => {
               <p className="text-sm font-medium">筆</p>
             </div>
             <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-              第 {pageIndex} 頁，共 {data.totalPages} 頁
+              第 {pageIndex} 頁，共 {data.totalPage} 頁
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -98,8 +98,8 @@ const PublicDocumentTableWithPagination = () => {
               <Button
                 variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => setPageIndex(data.totalPages)}
-                disabled={pageIndex === data.totalPages}
+                onClick={() => setPageIndex(data.totalPage)}
+                disabled={pageIndex === data.totalPage}
               >
                 <DoubleArrowRightIcon className="h-4 w-4" />
               </Button>
