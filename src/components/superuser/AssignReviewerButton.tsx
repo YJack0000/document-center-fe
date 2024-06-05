@@ -51,18 +51,16 @@ export default function SuperUserAssignReviewerBtn( {
 
   // if one of the selected document is in edit status, then the submit button should be disabled
   const canSubmitCheckStatus = useMemo(() => {  
-    if (reviewRequestList.length === 0) {
-      return false
-    }
     return reviewRequestList.every((row) => row.status !== "edit")
   }, [reviewRequestList])
 
   // if one of the assigned Reviewer is the owner of the document, then the submit button should be disabled 
   const canSubmitCheckOwner = useMemo(() => { 
-    if (reviewRequestList.length === 0) {
-      return false
-    }
     return reviewRequestList.every((row) => row.owner.id !== row.assignedReviewer?.id)
+  }, [reviewRequestList])
+
+  const canSubmitDelete = useMemo(() => {
+    return reviewRequestList.every((row) => row.status !== "delete")
   }, [reviewRequestList])
 
   const handleClickSubmit = () => {
@@ -117,7 +115,7 @@ export default function SuperUserAssignReviewerBtn( {
         </Table>
         <DialogFooter>
           <DialogClose asChild className="flex items-center">
-            {canSubmitCheckEmpty && canSubmitCheckStatus && canSubmitCheckOwner ? (
+            {canSubmitCheckEmpty && canSubmitCheckStatus && canSubmitCheckOwner && canSubmitDelete? (
               <Button type="submit" variant="outline" onClick={handleClickSubmit} >
                 確定
               </Button>
@@ -129,11 +127,15 @@ export default function SuperUserAssignReviewerBtn( {
               <div className="text-red-500">
                 有文件編輯中
               </div>
-            ) : (
+            ) : canSubmitCheckOwner === false ? (
               <div className="text-red-500">
                 存在文件的審核者為其文件擁有者
               </div>
-            )}
+            ) : 
+              <div className="text-red-500">
+                有文件狀態為刪除
+              </div>
+            }
           </DialogClose>
           <DialogClose asChild>
             <Button variant="outline">取消</Button>

@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useMemo } from "react"
+import { StatusBadge } from "./StatusBadge"
 
 type RowSelectedDocumentInfoType = {
   documentId: string,
@@ -75,21 +76,7 @@ export default function SuperUserDeleteDocument({
                 <TableCell>{row.documentId}</TableCell>
                 <TableCell>{row.title}</TableCell>
                 <TableCell>
-                  <>
-                  {row.status === "pass" 
-                    ? (<span className="px-2 py-1 text-xs font-semibold text-green-600 bg-green-200 rounded-full"> 通過 </span>)
-                    : row.status === "reject"
-                    ? (<span className="px-2 py-1 text-xs font-semibold text-red-600 bg-red-200 rounded-full"> 拒絕 </span>)
-                    : row.status === "review"
-                    ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 審核中 </span>)
-                    : row.status === "wait"
-                    ? (<span className="px-2 py-1 text-xs font-semibold text-yellow-600 bg-yellow-200 rounded-full"> 等待中 </span>)
-                    : row.status === "transfer"
-                    ? (<span className="px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-200 rounded-full"> 轉交 </span>)
-                    : row.status === "edit"
-                    ? (<span className="px-2 py-1 text-xs font-semibold text-gray-600 bg-gray-200 rounded-full"> 編輯中 </span>)
-                    : (<span className="px-2 py-1 text-xs font-semibold text-purple-600 bg-purple-200 rounded-full"> {row.status} </span>)}
-                  </>
+                  <StatusBadge status={row.status} />
                 </TableCell>
                 <TableCell>{row.owner.name}</TableCell>
               </TableRow>
