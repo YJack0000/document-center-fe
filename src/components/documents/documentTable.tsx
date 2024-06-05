@@ -26,6 +26,7 @@ import {
 import {
   ArrowUpDown,
   ChevronDown,
+  Loader2,
   MoreHorizontal,
   Pencil,
   Trash,
@@ -53,7 +54,7 @@ const Reviewer = ({ documentId }: any) => {
     return data.data
   })
   if (error) return <div>Failed to load</div>
-  if (!data) return <div>載入中</div>
+  if (!data) return <Loader2 className="mr-2 h-4 w-4 animate-spin" />
 
   if (data.length === 0) {
     return <div>無</div>
