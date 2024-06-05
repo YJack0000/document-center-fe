@@ -107,7 +107,7 @@ export const columns: ColumnDef<DocumentDTO>[] = [
     ),
   },
   {
-    accessorKey: "status",
+    accessorKey: "isPublic",
     header: "公開狀態",
     cell: ({ row }) => (
       <div className="capitalize">
