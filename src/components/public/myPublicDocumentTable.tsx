@@ -96,7 +96,14 @@ export const columns: ColumnDef<DocumentDTO>[] = [
     accessorKey: "title",
     header: "標題",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("title")}</div>
+      <div
+        className="capitalize cursor-pointer hover:underline"
+        onClick={() => {
+          window.location.href = `/public/documents/${row.original.id}`
+        }}
+      >
+        {row.getValue("title")}
+      </div>
     ),
   },
   {
@@ -201,9 +208,6 @@ export function PublicDataTable({ data }: { data: DocumentDTO[] }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => {
-                    router.push(`/public/documents/${row.original.id}`)
-                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
