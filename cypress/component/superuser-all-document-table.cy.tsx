@@ -4,19 +4,19 @@ describe("Component Test", ()=> {
     beforeEach(() =>{
         cy.intercept(
             "GET",
-            "/api/documents/public/all?page=1&limit=10",
+            "/api/documents/public/all?page=1&limit=10&search=",
             (req) => {
                 req.reply({"data": [], "page": 1, "limit": 10, "total": 0})
             }
         )
         cy.intercept(
             "GET",
-            "/api/documents/all?page=1&limit=10&search=",
+            "/api/documents/all?page=1&limit=8&search=",
             {fixture: "superuser-all-documents-1.json"}
         )
         cy.intercept(
             "GET",
-            "/api/documents/all?page=2&limit=10&search=",
+            "/api/documents/all?page=2&limit=8&search=",
             {fixture: "superuser-all-documents-2.json"}
         )
 				cy.intercept(
@@ -48,7 +48,6 @@ describe("Component Test", ()=> {
     })
 
     it("should display all documents", ()=> {
-        // cy.get("table").find("tbody tr").should("have.length", 10)
         cy.get("table").find("tbody tr").eq(0).find("td").eq(1).should("contain.text", "Document 1")
         cy.get("table").find("tbody tr").eq(0).find("td").eq(2).should("contain.text", "通過")
         cy.get("table").find("tbody tr").eq(0).find("td").eq(3).should("contain.text", "Owner 1")
