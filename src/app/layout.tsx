@@ -36,7 +36,7 @@ export default function RootLayout({
           <LoadingContext.Provider value={[globalLoading, setGlobalLoading]}>
             {globalLoading && (
               <div className="h-[100vh] flex items-center justify-center w-full">
-                <Loader className="m-auto animate-spin" size={180} />
+                <Loader className="m-auto animate-spin" size={64} />
               </div>
             )}
             <div className={`w-full flex ${globalLoading ? "hidden" : ""}`}>
