@@ -40,7 +40,7 @@ export default function RootLayout({
             <body className={inter.className}>
                 <NextTopLoader zIndex={1600} />
                 <div className="flex h-[100vh]">
-                    <Sidebar className="max-w-60 h-screen border" />
+                    <Sidebar className="w-64 h-screen border" />
                     <LoadingContext.Provider value={[globalLoading, setGlobalLoading]}>
                         {globalLoading && (
                             <div className="h-[100vh] flex items-center justify-center w-full">
