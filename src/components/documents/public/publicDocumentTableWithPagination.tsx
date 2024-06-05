@@ -15,12 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {Input} from "@/components/ui/input"
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import useDebounce from "@/lib/debounce"
+import LoadingContext from "@/context/loadingContext"
 
 const PublicDocumentTableWithPagination = () => {
   const [pageIndex, setPageIndex] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const [globalLoading, setGlobalLoading] = useContext(LoadingContext)
   const route = "/api/documents/public/all"
 
     const [search, setSearch] = useState("")
@@ -35,7 +37,10 @@ const PublicDocumentTableWithPagination = () => {
       return response.json()
     }
   )
-
+  useEffect(() => {
+    setGlobalLoading(isLoading)
+  }, [isLoading])
+  if (isLoading) return <div>載入中...</div>
   if (error) return <div>取資料失敗</div>
   return (
     <div className="flex items-center justify-between flex-col gap-2">

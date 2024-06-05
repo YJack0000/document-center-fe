@@ -14,7 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import LoadingContext from "@/context/loadingContext"
 
 const ReviewTableWithPagination = ({}: {}) => {
   const [pageIndex, setPageIndex] = useState(1)
@@ -32,6 +33,10 @@ const ReviewTableWithPagination = ({}: {}) => {
     }
   )
 
+  const [globalLoading, setGlobalLoading] = useContext(LoadingContext)
+  useEffect(() => {
+    setGlobalLoading(isLoading)
+  }, [isLoading])
   if (isLoading) return <div>載入中...</div>
   if (error) return <div>Failed to fetch data</div>
   return (
