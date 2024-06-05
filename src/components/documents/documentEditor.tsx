@@ -2,17 +2,25 @@
 import useDocument from "@/hooks/useDocument"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import MDEditor, { commands } from "@uiw/react-md-editor"
 import { Button } from "../ui/button"
 import { useRouter } from "next/navigation"
 import { SendReviewDialog } from "./sendReviewDialog"
 
 function SubChildren({ close, execute, getState, textApi, dispatch }: any) {
-  const [file, setFile] = useState(null)
-  const upload = async () => {
+  const fileInputRef = useRef(null)
+  const [selectedFile, setSelectedFile] = useState(null)
+  const handleFileChange = (event: any) => {
+    setSelectedFile(event.target.files[0])
+  }
+  const upload = async (event: any) => {
+    if (!selectedFile) {
+      return
+    }
+    event.preventDefault()
     const data = new FormData()
-    data.append("file", file as any)
+    data.append("file", selectedFile)
 
     const res = await fetch("/api/upload-image", {
       method: "POST",
@@ -21,23 +29,30 @@ function SubChildren({ close, execute, getState, textApi, dispatch }: any) {
     const json = await res.json()
     const { fileName } = json
     const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/upload-image/${fileName}`
-    // encodeURI(url)
+    textApi.replaceSelection(`![image](${encodeURI(url)})\n`)
 
-    textApi.replaceSelection(`![image](${encodeURI(url)})`)
+    if (fileInputRef.current) {
+      ;(fileInputRef.current as any).value = ""
+    }
+    setSelectedFile(null)
+    close()
   }
   return (
-    <div style={{ width: 200, padding: 2 }}>
+    <div style={{ width: 250, padding: 2 }}>
       <div>上傳圖片</div>
       <Input
         type="file"
         id="file-input"
         accept="image/*"
-        onChange={(e: any) => {
-          const file = e.target.files[0]
-          setFile(file)
-        }}
+        ref={fileInputRef}
+        onChange={handleFileChange}
       />
-      <Button type="button" onClick={upload}>
+      <Button
+        type="button"
+        onClick={upload}
+        style={{ width: "100%", marginTop: 5 }}
+        disabled={!selectedFile}
+      >
         上傳
       </Button>
     </div>
@@ -93,9 +108,7 @@ const DocumentEditor = ({ documentId }: { documentId: string }) => {
   return (
     <div className="flex flex-col w-full gap-5">
       <div className="w-full flex gap-2 justify-end">
-        <Button onClick={handleSave}>
-          儲存
-        </Button>
+        <Button onClick={handleSave}>儲存</Button>
         <SendReviewDialog documentId={document.id} />
       </div>
       <div className="grid w-full items-center gap-1.5">
